@@ -7,10 +7,21 @@ import os
 import mimetypes
 import io
 import base64
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from PIL import Image, ImageOps
 import boto3
 from botocore.config import Config
+
+MYT_TZ = timezone(timedelta(hours=8))
+
+def get_kl_now():
+    return datetime.now(MYT_TZ)
+
+def get_kl_time_str():
+    return get_kl_now().strftime("%Y-%m-%d %H:%M:%S GMT+8")
+
+def get_kl_date_str():
+    return get_kl_now().strftime("%Y-%m-%d")
 
 PORT = int(os.environ.get("PORT", 8080))
 MEDIAKIT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -151,14 +162,14 @@ def load_state():
     }
 
 def save_state(state):
-    state["last_updated"] = datetime.utcnow().isoformat() + "Z"
+    state["last_updated"] = get_kl_time_str()
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
 def refresh_metrics_state():
     state = load_state()
-    now_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-    now_date = datetime.utcnow().strftime("%Y-%m-%d")
+    now_str = get_kl_time_str()
+    now_date = get_kl_date_str()
     state["last_updated"] = now_str
     if "metrics" not in state:
         state["metrics"] = {}

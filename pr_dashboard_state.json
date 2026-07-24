@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-24T09:53:40.083813Z",
+  "last_updated": "2026-07-24 18:04:09 GMT+8",
   "metrics": {
     "installed_kwp": 10750.99,
     "installed_mwp": 10.75,
@@ -8,7 +8,7 @@
     "total_clients_count": 7177,
     "total_invoices_count": 8107,
     "last_verified": "2026-07-24",
-    "last_check_date": "2026-07-24 09:53:40 UTC",
+    "last_check_date": "2026-07-24 18:04:09 GMT+8",
     "paid_clients_invoices_count": 1034,
     "total_revenue_rm": 28149508.59,
     "total_revenue_millions": 28.15,
