@@ -299,6 +299,43 @@ async function notifyPRAI(receivedEmail) {
 }</pre>
     </div>
 
+    <!-- Image Optimization Endpoint Section -->
+    <div class="section">
+      <h2 class="section-title">
+        <span class="http-method method-post">POST</span>
+        <span>Image Optimization & Cloudflare R2 Storage Endpoint</span>
+      </h2>
+      <div class="endpoint-url">https://ee-pr-production.up.railway.app/api/optimize-image?upload=true</div>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+        Designed specifically for <strong>PR Media Kit &amp; Press Publication</strong> standards. Preserves <strong>100% full original pixel resolution</strong> (no downscaling by default) and applies ultra-high quality WebP encoding (<strong>Quality 96% / Lossless</strong>). Also generates a 600px high-density thumbnail for UI previews and stores the raw uncompressed original master image in Cloudflare R2 for press downloads.
+      </p>
+
+      <h3 style="font-size: 15px; color: #fff; margin-top: 20px;">Sample Request Payload (JSON Base64 with Custom Quality Options)</h3>
+<pre>{
+  "filename": "solar_panel_install.jpg",
+  "image_base64": "...[base64 encoded image string]...",
+  "quality": 96,
+  "lossless": false,
+  "preserve_original": true
+}</pre>
+
+      <h3 style="font-size: 15px; color: #fff; margin-top: 20px;">Sample Response (HTTP 200 OK)</h3>
+<pre>{
+  "success": true,
+  "filename": "solar_panel_install.jpg",
+  "quality_preset": "PR_MEDIA_KIT_ULTRA_HIGH (Q96 Web Publication Grade, Original Resolution)",
+  "original_dimensions": [5472, 3648],
+  "optimized_dimensions": [5472, 3648],
+  "original_size_bytes": 14200000,
+  "optimized_size_bytes": 2850000,
+  "savings_percentage": "79.9%",
+  "format": "WEBP",
+  "r2_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/media/solar_panel_install.webp",
+  "r2_thumb_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/media/solar_panel_install_thumb.webp",
+  "r2_original_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/media/originals/solar_panel_install.jpg"
+}</pre>
+    </div>
+
     <!-- Health Check Section -->
     <div class="section">
       <h2 class="section-title">
@@ -309,6 +346,8 @@ async function notifyPRAI(receivedEmail) {
       <pre>{
   "status": "healthy",
   "service": "Eternalgy Corporate PR & Media Center",
+  "image_optimization": "enabled (Pillow 12.1.0 + WebP Ultra-High PR Media Kit Q96 / Lossless / Full-Res)",
+  "image_optimizer_endpoint": "/api/optimize-image",
   "webhook_endpoint": "/webhook/email-received"
 }</pre>
     </div>

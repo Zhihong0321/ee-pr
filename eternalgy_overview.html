@@ -264,6 +264,25 @@
       color: var(--text-muted);
       font-weight: 600;
     }
+    .stat-date-badge {
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(52, 211, 153, 0.25);
+      font-size: 11px;
+      color: #34d399;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    @keyframes spinSlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinning {
+      animation: spinSlow 0.8s linear infinite !important;
+    }
 
     /* Section Styling */
     .section { padding: 55px 0; }
@@ -702,31 +721,75 @@
         <a href="mailto:pr@eternalgy.me" style="color: #34d399; font-weight: 700; text-decoration: underline; font-size: 13.5px;">EMAIL ME: pr@eternalgy.me ↗</a>
       </div>
 
+      <!-- Live Verified Metrics Header with Refresh Button -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px; flex-wrap: wrap; gap: 12px; background: rgba(17, 32, 23, 0.6); padding: 12px 20px; border-radius: 14px; border: 1px solid rgba(52, 211, 153, 0.2);">
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="display: inline-block; width: 9px; height: 9px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></span>
+          <span style="font-family: var(--font-heading); font-size: 16px; font-weight: 700; color: #fff;">Live Verified Corporate Performance Metrics</span>
+          <span id="global-last-check-badge" style="font-size: 11.5px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); color: #34d399; padding: 3px 10px; border-radius: 12px; font-weight: 600;">
+            Synced: 2026-07-24 17:52 UTC
+          </span>
+        </div>
+        <button id="btnRefreshMetrics" onclick="triggerMetricsRefresh(this)" style="display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #040906; border: none; padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+          <span id="refreshIcon" style="display: inline-block; transition: transform 0.4s ease; font-size: 15px;">↻</span>
+          <span>Refresh Live Data</span>
+        </button>
+      </div>
+
       <!-- Live Verified Metrics from Postgres DB -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-number">10,750.99 kWp</div>
+          <div class="stat-number" id="stat-revenue">RM 28,149,508.59</div>
+          <div class="stat-label">Customer Revenue (RM 28.15M)</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-revenue">2026-07-24 17:52 UTC</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number" id="stat-kwp">10,750.99 kWp</div>
           <div class="stat-label">Installed Capacity (10.75 MWp)</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-kwp">2026-07-24 17:52 UTC</span>
+          </div>
         </div>
+
         <div class="stat-card">
-          <div class="stat-number">925</div>
+          <div class="stat-number" id="stat-projects">925 Projects</div>
           <div class="stat-label">Installed Projects (&ge;59.9% Paid)</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-projects">2026-07-24 17:52 UTC</span>
+          </div>
         </div>
+
         <div class="stat-card">
-          <div class="stat-number">11,485</div>
+          <div class="stat-number" id="stat-seda">11,485</div>
           <div class="stat-label">SEDA Project Registrations</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-seda">2026-07-24 17:52 UTC</span>
+          </div>
         </div>
+
         <div class="stat-card">
-          <div class="stat-number">7,177</div>
+          <div class="stat-number" id="stat-clients">7,177</div>
           <div class="stat-label">Verified Client Accounts</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-clients">2026-07-24 17:52 UTC</span>
+          </div>
         </div>
+
         <div class="stat-card">
-          <div class="stat-number">8,107</div>
-          <div class="stat-label">Invoices Managed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">60+</div>
-          <div class="stat-label">Staff &amp; Engineers</div>
+          <div class="stat-number" id="stat-invoices">8,107</div>
+          <div class="stat-label">Invoices Managed (RM 29.28M)</div>
+          <div class="stat-date-badge">
+            <span>📅 Checked:</span>
+            <span id="date-invoices">2026-07-24 17:52 UTC</span>
+          </div>
         </div>
       </div>
     </section>
@@ -1456,11 +1519,84 @@
       });
     }
 
+    function updateMetricsUI(state) {
+      if (!state || !state.metrics) return;
+      const m = state.metrics;
+      const checkDate = m.last_check_date || state.last_updated || (new Date().toISOString().slice(0,19).replace('T',' ') + ' UTC');
+
+      if (document.getElementById('stat-revenue')) {
+        const rev = m.total_revenue_rm ? 'RM ' + Number(m.total_revenue_rm).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : 'RM 28,149,508.59';
+        document.getElementById('stat-revenue').textContent = rev;
+      }
+      if (document.getElementById('stat-kwp')) {
+        const kwp = m.installed_kwp ? Number(m.installed_kwp).toLocaleString('en-US') + ' kWp' : '10,750.99 kWp';
+        document.getElementById('stat-kwp').textContent = kwp;
+      }
+      if (document.getElementById('stat-projects')) {
+        const proj = m.installed_projects_count ? m.installed_projects_count + ' Projects' : '925 Projects';
+        document.getElementById('stat-projects').textContent = proj;
+      }
+      if (document.getElementById('stat-seda')) {
+        const seda = m.seda_registrations_count ? Number(m.seda_registrations_count).toLocaleString('en-US') : '11,485';
+        document.getElementById('stat-seda').textContent = seda;
+      }
+      if (document.getElementById('stat-clients')) {
+        const clients = m.total_clients_count ? Number(m.total_clients_count).toLocaleString('en-US') : '7,177';
+        document.getElementById('stat-clients').textContent = clients;
+      }
+      if (document.getElementById('stat-invoices')) {
+        const inv = m.total_invoices_count ? Number(m.total_invoices_count).toLocaleString('en-US') : '8,107';
+        document.getElementById('stat-invoices').textContent = inv;
+      }
+
+      const dateEls = ['date-revenue', 'date-kwp', 'date-projects', 'date-seda', 'date-clients', 'date-invoices'];
+      dateEls.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = checkDate;
+      });
+
+      const globalBadge = document.getElementById('global-last-check-badge');
+      if (globalBadge) {
+        globalBadge.textContent = 'Synced: ' + checkDate;
+      }
+    }
+
+    async function triggerMetricsRefresh(btn) {
+      const icon = document.getElementById('refreshIcon');
+      if (icon) icon.classList.add('spinning');
+      if (btn) btn.disabled = true;
+      showToast('🔄 Fetching live DB metrics and updating last check timestamps...');
+
+      try {
+        const response = await fetch('/api/refresh-metrics', { method: 'POST' });
+        const res = await response.json();
+        if (res.success && res.data) {
+          updateMetricsUI(res.data);
+          showToast('✅ Metrics Refreshed! Last checked: ' + (res.data.metrics?.last_check_date || 'Now'));
+        } else {
+          const fallbackResp = await fetch('/api/dashboard-state?refresh=true');
+          const state = await fallbackResp.json();
+          updateMetricsUI(state);
+          showToast('✅ Metrics Refreshed!');
+        }
+      } catch (err) {
+        showToast('⚠️ Refresh notice: ' + err.message);
+      } finally {
+        setTimeout(() => {
+          if (icon) icon.classList.remove('spinning');
+          if (btn) btn.disabled = false;
+        }, 500);
+      }
+    }
+
     async function loadDashboardState() {
       try {
         const response = await fetch('/api/dashboard-state');
         if (!response.ok) return;
         const state = await response.json();
+
+        // Update Live Metrics & Dates
+        updateMetricsUI(state);
 
         // Render Manager Questions Console
         const consoleEl = document.getElementById('managerQAConsole');
