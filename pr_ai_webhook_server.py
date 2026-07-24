@@ -32,7 +32,7 @@ def load_state():
         except Exception:
             pass
     return {
-        "metrics": {"installed_kwp": 10861.78, "installed_projects_count": 935},
+        "metrics": {"installed_kwp": 10750.99, "installed_projects_count": 925},
         "manager_questions": [],
         "published_updates": []
     }
@@ -128,7 +128,6 @@ def process_incoming_email(email_id, raw_payload=None):
     if not subj:
         subj = f"PR Communication (ID: {email_id})"
         
-    # MiniMax-M3 Reasoning Engine
     llm_result = analyze_email_with_minimax(subj, sender, body_text)
     print(f"MiniMax-M3 Analysis Result: {llm_result}")
     
@@ -173,6 +172,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(data).encode("utf-8"))
 
     def do_GET(self):
+        # Serve root PR Showcase UI
         if self.path == "/" or self.path == "/index.html":
             html_path = os.path.join(MEDIAKIT_DIR, "eternalgy_overview.html")
             if os.path.exists(html_path):
@@ -180,6 +180,15 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
 
+        # Serve Dedicated Manager AI Approval Queue Page
+        if self.path in ["/queue", "/approval-queue", "/queue.html", "/manager"]:
+            queue_path = os.path.join(MEDIAKIT_DIR, "queue.html")
+            if os.path.exists(queue_path):
+                with open(queue_path, "r", encoding="utf-8") as f:
+                    self._send_response(200, f.read(), "text/html; charset=utf-8")
+                return
+
+        # Serve API Documentation page for Email Server Team
         if self.path in ["/docs", "/webhook-docs", "/docs.html"]:
             docs_path = os.path.join(MEDIAKIT_DIR, "webhook_docs.html")
             if os.path.exists(docs_path):
@@ -200,6 +209,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 "cloud_storage": "Cloudflare R2",
                 "r2_bucket": R2_BUCKET_NAME,
                 "webhook_endpoint": "/webhook/email-received",
+                "manager_queue_page": "/queue",
                 "documentation": "/docs"
             })
             return
@@ -274,7 +284,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
-    print(f"Starting Eternalgy PR AI Server with MiniMax-M3 Engine on port {PORT}...")
+    print(f"Starting Eternalgy PR AI Server with Standalone Queue Portal on port {PORT}...")
     server = socketserver.TCPServer(("", PORT), PRServerHandler)
     try:
         server.serve_forever()

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternalgy PR AI Manager Approval Queue</title>
+
+  <!-- Google Fonts Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #060b08;
+      --bg-card: #112017;
+      --bg-card-hover: #172b1f;
+      --primary: #10b981;
+      --primary-light: #34d399;
+      --warning: #f59e0b;
+      --border-color: rgba(52, 211, 153, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 20px;
+      color: #fbbf24;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 6px;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px 22px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .stat-value {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .queue-section {
+      margin-bottom: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .q-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .q-card.resolved {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+      color: #fff;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: var(--primary);
+      color: #040906;
+      border-color: var(--primary);
+    }
+    .btn-action.btn-primary {
+      background: var(--primary);
+      color: #040906;
+      border-color: var(--primary);
+    }
+
+    .btn-back {
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .btn-back:hover { background: rgba(16,185,129,0.15); border-color: var(--primary-light); }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #040906;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <span class="brand-badge">🤖 MiniMax-M3 LLM Engine Active</span>
+        <h1>Eternalgy PR AI Manager Governance Queue</h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Standalone Dedicated Approval Portal for pr@eternalgy.me Inbound Email Tasks</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="/" class="btn-back">🌐 Public PR Showcase</a>
+        <a href="/docs" class="btn-back">📄 API Specs</a>
+      </div>
+    </header>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">Pending AI Questions</div>
+        <div class="stat-value" id="statPendingCount" style="color: #fbbf24;">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Resolved Decisions</div>
+        <div class="stat-value" id="statResolvedCount" style="color: #34d399;">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ingested Inbound Emails</div>
+        <div class="stat-value" id="statTotalIngested" style="color: #60a5fa;">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Connected Ingestion Email</div>
+        <div class="stat-value" style="font-size: 18px; color: #fff;">pr@eternalgy.me</div>
+      </div>
+    </div>
+
+    <!-- Active Queue Section -->
+    <div class="queue-section">
+      <div class="section-header">
+        <h2 class="section-title">⏳ Active Action Questions (Awaiting Manager Decision)</h2>
+        <button onclick="fetchQueueState()" class="btn-action" style="font-size: 12px;">🔄 Refresh Queue</button>
+      </div>
+
+      <div class="card-grid" id="activeQueueGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Resolved History Section -->
+    <div class="queue-section">
+      <div class="section-header">
+        <h2 class="section-title">✅ Resolved Decision History</h2>
+      </div>
+
+      <div class="card-grid" id="resolvedQueueGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="toast"></div>
+
+  <script>
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    function handleOptionClick(btnEl) {
+      const qid = btnEl.getAttribute('data-qid');
+      const opt = btnEl.getAttribute('data-opt');
+      if (!qid || !opt) return;
+
+      btnEl.style.opacity = '0.5';
+      btnEl.innerText = '⏳ Recording Decision...';
+
+      fetch('/api/manager-response', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question_id: qid, selected_option: opt })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('✅ Manager Decision Recorded: ' + opt);
+          fetchQueueState();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to save choice'));
+          fetchQueueState();
+        }
+      })
+      .catch(err => {
+        alert('Network Error: ' + err.message);
+        fetchQueueState();
+      });
+    }
+
+    async function fetchQueueState() {
+      try {
+        const response = await fetch('/api/dashboard-state');
+        if (!response.ok) return;
+        const state = await response.json();
+
+        const questions = state.manager_questions || [];
+        const pending = questions.filter(q => q.status !== 'RESOLVED');
+        const resolved = questions.filter(q => q.status === 'RESOLVED');
+
+        document.getElementById('statPendingCount').textContent = pending.length;
+        document.getElementById('statResolvedCount').textContent = resolved.length;
+        document.getElementById('statTotalIngested').textContent = questions.length;
+
+        // Render Active Pending Queue
+        const activeGrid = document.getElementById('activeQueueGrid');
+        if (pending.length === 0) {
+          activeGrid.innerHTML = `
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 40px; text-align: center;">
+              <p style="color: var(--text-muted); font-size: 15px;">🎉 No pending questions from PR AI! All inbound emails have been resolved.</p>
+            </div>`;
+        } else {
+          activeGrid.innerHTML = pending.map(q => renderQuestionCard(q, false)).join('');
+        }
+
+        // Render Resolved Queue
+        const resolvedGrid = document.getElementById('resolvedQueueGrid');
+        if (resolved.length === 0) {
+          resolvedGrid.innerHTML = `
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 30px; text-align: center;">
+              <p style="color: var(--text-muted); font-size: 14px;">No past decisions recorded yet.</p>
+            </div>`;
+        } else {
+          resolvedGrid.innerHTML = resolved.map(q => renderQuestionCard(q, true)).join('');
+        }
+
+      } catch (err) {
+        console.error('Queue load error:', err);
+      }
+    }
+
+    function renderQuestionCard(q, isResolved) {
+      const optionsHtml = (q.options || []).map(opt => {
+        const safeOpt = opt.replace(/"/g, '&quot;');
+        return `
+          <button type="button" 
+                  class="btn-action ${isResolved && q.selected_option === opt ? 'btn-primary' : ''}" 
+                  data-qid="${q.question_id}" 
+                  data-opt="${safeOpt}"
+                  onclick="handleOptionClick(this)"
+                  ${isResolved ? 'disabled' : ''}>
+            ${opt} ${isResolved && q.selected_option === opt ? '✓' : ''}
+          </button>
+        `;
+      }).join('');
+
+      return `
+        <div class="q-card ${isResolved ? 'resolved' : ''}">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <span class="badge-tag" style="background: ${isResolved ? '#10b981' : '#f59e0b'}; color: #040906; font-weight: 800;">
+                ${q.category || 'AI QUESTION'}
+              </span>
+              <span style="font-size: 12px; color: var(--text-muted); margin-left: 10px;">
+                Email ID: ${q.email_id} · Received: ${new Date(q.timestamp).toLocaleString()}
+              </span>
+            </div>
+            <span style="font-size: 13px; font-weight: 700; color: ${isResolved ? '#34d399' : '#fbbf24'};">
+              ${isResolved ? '✅ Decision Recorded' : '⏳ Awaiting Manager Decision'}
+            </span>
+          </div>
+
+          <h3 style="font-family: var(--font-heading); font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 8px;">
+            ${q.question}
+          </h3>
+
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+            <strong style="color: var(--primary-light);">Subject:</strong> ${q.email_subject}<br/>
+            <strong style="color: var(--primary-light);">MiniMax-M3 AI Analysis:</strong> ${q.ai_analysis}
+          </p>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            ${optionsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchQueueState);
+  </script>
+</body>
+</html>
