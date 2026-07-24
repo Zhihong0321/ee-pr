@@ -96,8 +96,13 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 with open(html_path, "r", encoding="utf-8") as f:
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
-            else:
-                self._send_response(404, {"error": "eternalgy_overview.html not found"})
+
+        # Serve API Documentation page for Email Server Team
+        if self.path in ["/docs", "/webhook-docs", "/docs.html"]:
+            docs_path = os.path.join(MEDIAKIT_DIR, "webhook_docs.html")
+            if os.path.exists(docs_path):
+                with open(docs_path, "r", encoding="utf-8") as f:
+                    self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
 
         # Serve Health endpoint
@@ -105,7 +110,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {
                 "status": "healthy",
                 "service": "Eternalgy Corporate PR & Media Center",
-                "webhook_endpoint": "/webhook/email-received"
+                "webhook_endpoint": "/webhook/email-received",
+                "documentation": "/docs"
             })
             return
 
