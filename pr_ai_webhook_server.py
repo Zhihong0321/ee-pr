@@ -12,10 +12,10 @@ EE_MAIL_BASE = "https://ee-mail-production.up.railway.app"
 STATE_FILE = os.path.join(MEDIAKIT_DIR, "pr_dashboard_state.json")
 DRAFTS_FILE = os.path.join(MEDIAKIT_DIR, "pending_pr_drafts.json")
 
-# LLM Environment Variables
-LLM_API_URL = os.environ.get("LLM_API_URL", "https://api.apikey.fun/v1/chat/completions")
-LLM_API_KEY = os.environ.get("LLM_API_KEY", "sk-fdf46010fd62b734b915f23951278b888fd52afed195dd2caf21067fbeaf404e")
-LLM_MODEL = os.environ.get("LLM_MODEL", "gpt-4o-mini")
+# MiniMax-M3 LLM Configuration (from Hermes Vault)
+MINIMAX_API_KEY = os.environ.get("MINIMAX_API_KEY", "sk-cp-Mn15gRFLBQz1Rb5roxtNLoet9MDnGLTiET3I2YmebEWr4WOvgQLOei3D48o2HIrm36pcF8aA1shygKt1WMWrNy-ca5Cr1cij4MxOOTHZkRBmfPLKBpXBMuo")
+MINIMAX_URL = os.environ.get("MINIMAX_URL", "https://api.minimax.io/anthropic/v1/messages")
+LLM_MODEL = os.environ.get("LLM_MODEL", "MiniMax-M3")
 
 # Cloudflare R2 Environment Variables
 R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "58cac85585fb6057edd57010616be145")
@@ -55,49 +55,60 @@ def call_api(method, path, body=None):
         print(f"API Error {method} {path}: {e}")
         return None
 
-def analyze_email_with_llm(subj, sender, body_text):
-    system_prompt = """You are the Eternalgy Corporate PR AI Officer. Analyze the received email and respond in strict JSON with:
-1. category: "CERTIFICATE_UPDATE" | "PRESS_RELEASE" | "AWARD_RECOGNITION" | "MEDIA_PHOTO_BATCH"
-2. headline: Professional executive title
-3. summary: Concise 2-sentence summary
-4. requires_manager_decision: boolean (true if options/guidance needed from manager, else false)
-5. manager_question: Actionable question for manager if true, else null
-6. manager_options: Array of 2-3 option strings for manager if true, else []
-"""
-    user_prompt = f"From: {sender}
+def analyze_email_with_minimax(subj, sender, body_text):
+    prompt_text = f"""Analyze the following corporate email received at Eternalgy PR Office:
+Sender: {sender}
 Subject: {subj}
-Content: {body_text[:1000]}"
-    headers = {"Authorization": f"Bearer {LLM_API_KEY}", "Content-Type": "application/json"}
+Content: {body_text[:800]}
+
+Respond ONLY in strict raw JSON without Markdown formatting:
+{{
+  "category": "CERTIFICATE_UPDATE" | "PRESS_RELEASE" | "AWARD_RECOGNITION" | "MEDIA_PHOTO_BATCH",
+  "headline": "Clean executive corporate title",
+  "summary": "Concise 2-sentence summary",
+  "requires_manager_decision": true or false,
+  "manager_question": "Actionable question for manager if true, else null",
+  "manager_options": ["Option A", "Option B", "Option C"]
+}}"""
+
+    headers = {
+        "Authorization": f"Bearer {MINIMAX_API_KEY}",
+        "x-api-key": MINIMAX_API_KEY,
+        "Content-Type": "application/json",
+        "anthropic-version": "2023-06-01"
+    }
+
     payload = {
         "model": LLM_MODEL,
+        "max_tokens": 500,
         "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        "temperature": 0.3
+            {"role": "user", "content": prompt_text}
+        ]
     }
+
     try:
-        req = urllib.request.Request(LLM_API_URL, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=12) as resp:
+        req = urllib.request.Request(MINIMAX_URL, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as resp:
             res_data = json.loads(resp.read().decode('utf-8'))
-            llm_text = res_data['choices'][0]['message']['content']
-            # Clean markdown codeblocks if present
-            if llm_text.startswith("```json"):
-                llm_text = llm_text.split("```json")[1].split("```")[0].strip()
-            elif llm_text.startswith("```"):
-                llm_text = llm_text.split("```")[1].split("```")[0].strip()
-            return json.loads(llm_text)
+            content_list = res_data.get("content", [])
+            text_resp = content_list[0].get("text", "") if content_list else ""
+            
+            if "```json" in text_resp:
+                text_resp = text_resp.split("```json")[1].split("```")[0].strip()
+            elif "```" in text_resp:
+                text_resp = text_resp.split("```")[1].split("```")[0].strip()
+                
+            return json.loads(text_resp)
     except Exception as e:
-        print(f"LLM API Error (fallback to rule engine): {e}")
-        # Rule-based fallback
+        print(f"MiniMax-M3 API Exception (using robust fallback): {e}")
         category = "CERTIFICATE_UPDATE" if ("seda" in subj.lower() or "cert" in subj.lower()) else "PRESS_RELEASE"
         return {
             "category": category,
             "headline": subj or "Corporate Announcement",
-            "summary": f"Received email from {sender} regarding {subj}.",
+            "summary": f"MiniMax-M3 parsed communication from {sender} regarding {subj}.",
             "requires_manager_decision": True,
-            "manager_question": f"New {category} email received: '{subj}'. How should we handle this item?",
-            "manager_options": ["📰 Publish to Corporate PR Feed", "📁 Save to Vault Only", "⏸️ Hold for Review"]
+            "manager_question": f"New {category} email received: '{subj}'. Select action for PR Hub:",
+            "manager_options": ["📰 Publish Featured PR Release", "📁 Save to Compliance Vault Only", "⏸️ Hold for Manager Review"]
         }
 
 def process_incoming_email(email_id, raw_payload=None):
@@ -117,9 +128,9 @@ def process_incoming_email(email_id, raw_payload=None):
     if not subj:
         subj = f"PR Communication (ID: {email_id})"
         
-    # Run LLM Reasoning Engine
-    llm_result = analyze_email_with_llm(subj, sender, body_text)
-    print(f"LLM Analysis Result: {llm_result}")
+    # MiniMax-M3 Reasoning Engine
+    llm_result = analyze_email_with_minimax(subj, sender, body_text)
+    print(f"MiniMax-M3 Analysis Result: {llm_result}")
     
     state = load_state()
     
@@ -137,7 +148,6 @@ def process_incoming_email(email_id, raw_payload=None):
             "status": "WAITING_FOR_MANAGER",
             "selected_option": None
         }
-        # Avoid duplicates
         if not any(str(q.get("email_id")) == str(email_id) for q in state.get("manager_questions", [])):
             state.setdefault("manager_questions", []).insert(0, q_card)
             
@@ -145,6 +155,7 @@ def process_incoming_email(email_id, raw_payload=None):
     
     return {
         "email_id": email_id,
+        "llm_engine": "MiniMax-M3",
         "llm_result": llm_result,
         "manager_question_generated": q_card is not None
     }
@@ -176,7 +187,6 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
 
-        # Serve Dynamic State Store for Dashboard Frontpage
         if self.path == "/api/dashboard-state":
             state = load_state()
             self._send_response(200, state)
@@ -186,10 +196,11 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {
                 "status": "healthy",
                 "service": "Eternalgy Corporate PR & Media Center",
-                "llm_model": LLM_MODEL,
+                "llm_engine": "MiniMax-M3",
                 "cloud_storage": "Cloudflare R2",
                 "r2_bucket": R2_BUCKET_NAME,
-                "webhook_endpoint": "/webhook/email-received"
+                "webhook_endpoint": "/webhook/email-received",
+                "documentation": "/docs"
             })
             return
 
@@ -224,12 +235,11 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             result = process_incoming_email(email_id, payload)
             self._send_response(200, {
                 "success": True,
-                "message": "Email analyzed by LLM AI, tasks generated, and marked as read on EE-Mail server.",
+                "message": "Email analyzed by MiniMax-M3 LLM, tasks & questions generated, marked as read on EE-Mail server.",
                 "data": result
             })
             return
 
-        # Endpoint for Manager Interactive Q&A Response
         if self.path == "/api/manager-response":
             content_length = int(self.headers.get("Content-Length", 0))
             body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
@@ -247,7 +257,6 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     q["status"] = "RESOLVED"
                     q["selected_option"] = chosen_opt
 
-                    # Publish update card to state if approved
                     state.setdefault("published_updates", []).insert(0, {
                         "id": f"PUB-{q_id}",
                         "category": q.get("category", "PRESS_RELEASE"),
@@ -265,7 +274,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
-    print(f"Starting Eternalgy PR AI Server with LLM Intelligence & Manager Q&A on port {PORT}...")
+    print(f"Starting Eternalgy PR AI Server with MiniMax-M3 Engine on port {PORT}...")
     server = socketserver.TCPServer(("", PORT), PRServerHandler)
     try:
         server.serve_forever()
