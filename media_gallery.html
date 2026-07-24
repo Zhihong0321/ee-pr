@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternalgy Corporate Cloudflare R2 Media &amp; Photo Bucket</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #060b08;
+      --bg-card: #112017;
+      --primary: #10b981;
+      --primary-light: #34d399;
+      --border-color: rgba(52, 211, 153, 0.25);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: 20px;
+      color: var(--primary-light);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 6px;
+    }
+
+    /* Filter Tabs */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--primary);
+      color: #040906;
+      border-color: var(--primary);
+    }
+
+    /* Media Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .media-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .media-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-light);
+    }
+
+    .media-thumb {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #000;
+      cursor: pointer;
+    }
+
+    .media-info {
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .media-title {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .media-category {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--primary-light);
+      margin-bottom: 10px;
+    }
+
+    .cdn-url-box {
+      font-family: var(--font-code);
+      font-size: 11px;
+      background: #040805;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #9ca3af;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+
+    .btn-action {
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-action:hover { background: var(--primary); color: #040906; }
+
+    .btn-back {
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    /* Modal Lightbox */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-img { max-width: 90vw; max-height: 85vh; border-radius: 12px; border: 2px solid var(--primary); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10b981;
+      color: #040906;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 3000;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <span class="brand-badge">☁️ Cloudflare R2 Bucket: eternalgy-image</span>
+        <h1>Company Project Photo &amp; Media Library</h1>
+        <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Categorized High-Resolution Assets &amp; CDN Links for Designers &amp; Ad Content Managers</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="/" class="btn-back">🌐 Public PR Showcase</a>
+        <a href="/queue" class="btn-back">🤖 AI Manager Queue</a>
+      </div>
+    </header>
+
+    <!-- Category Filter Bar -->
+    <div class="filter-bar">
+      <button class="filter-tab active" onclick="filterGallery('all', this)">All Media Assets (9)</button>
+      <button class="filter-tab" onclick="filterGallery('ci', this)">Commercial &amp; Industrial (C&amp;I)</button>
+      <button class="filter-tab" onclick="filterGallery('residential', this)">Residential Solar</button>
+      <button class="filter-tab" onclick="filterGallery('certs', this)">Certificates &amp; Awards</button>
+      <button class="filter-tab" onclick="filterGallery('branding', this)">Logos &amp; Branding</button>
+    </div>
+
+    <!-- Media Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+
+      <!-- Asset 1: CIDB Certificate -->
+      <div class="media-card" data-cat="certs">
+        <img src="Reference/Eternalgy_Cert_CIDB.png" class="media-thumb" onclick="openLightbox(this.src)" alt="CIDB G7 License" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Certificates &amp; Licenses</span>
+            <h3 class="media-title">CIDB Grade G7 Unlimited License</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Eternalgy_Cert_CIDB.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Eternalgy_Cert_CIDB.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/Eternalgy_Cert_CIDB.pdf" download class="btn-action">📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 2: SEDA RPVSP -->
+      <div class="media-card" data-cat="certs">
+        <img src="Reference/Eternalgy_Cert_RPVSP.png" class="media-thumb" onclick="openLightbox(this.src)" alt="SEDA RPVSP" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Certificates &amp; Licenses</span>
+            <h3 class="media-title">SEDA Registered RPVSP Certificate</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Eternalgy_Cert_RPVSP.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Eternalgy_Cert_RPVSP.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/Eternalgy_Cert_RPVSP.pdf" download class="btn-action">📥 PDF</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 3: Golden Bull Award -->
+      <div class="media-card" data-cat="certs">
+        <img src="Reference/page_17.png" class="media-thumb" onclick="openLightbox(this.src)" alt="Golden Bull Award" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Certificates &amp; Awards</span>
+            <h3 class="media-title">Golden Bull Outstanding Enterprise Award</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_17.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_17.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/page_17.png" download class="btn-action">📥 High-Res</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 4: Eternalgy Logo PNG -->
+      <div class="media-card" data-cat="branding">
+        <img src="Logo/eternalgy.png" class="media-thumb" onclick="openLightbox(this.src)" style="object-fit: contain; padding: 20px; background: #fff;" alt="Eternalgy Logo" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Logos &amp; Branding</span>
+            <h3 class="media-title">Eternalgy Corporate Logo (HD PNG)</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/eternalgy.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/eternalgy.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Logo/eternalgy.png" download class="btn-action">📥 Download</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 5: Jinko Solar Logo SVG -->
+      <div class="media-card" data-cat="branding">
+        <img src="Logo/Jinko_Solar_logo.svg" class="media-thumb" onclick="openLightbox(this.src)" style="object-fit: contain; padding: 20px; background: #fff;" alt="Jinko Solar Logo" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Logos &amp; Branding</span>
+            <h3 class="media-title">Jinko Solar TOPCon Vector SVG</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Jinko_Solar_logo.svg</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/Jinko_Solar_logo.svg')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Logo/Jinko_Solar_logo.svg" download class="btn-action">📥 SVG</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 6: SAJ Malaysia Logo -->
+      <div class="media-card" data-cat="branding">
+        <img src="Logo/saj-logo.png" class="media-thumb" onclick="openLightbox(this.src)" style="object-fit: contain; padding: 20px; background: #fff;" alt="SAJ Logo" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Logos &amp; Branding</span>
+            <h3 class="media-title">SAJ Malaysia Sole Partner Logo</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/saj-logo.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/saj-logo.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Logo/saj-logo.png" download class="btn-action">📥 PNG</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 7: Commercial Factory Installation -->
+      <div class="media-card" data-cat="ci">
+        <img src="Reference/page_2.png" class="media-thumb" onclick="openLightbox(this.src)" alt="Commercial Installation" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Commercial &amp; Industrial (C&amp;I)</span>
+            <h3 class="media-title">500kWp Commercial Rooftop Installation</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_2.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_2.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/page_2.png" download class="btn-action">📥 High-Res</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 8: Industrial Solar Array -->
+      <div class="media-card" data-cat="ci">
+        <img src="Reference/page_18.png" class="media-thumb" onclick="openLightbox(this.src)" alt="Industrial Solar Array" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Commercial &amp; Industrial (C&amp;I)</span>
+            <h3 class="media-title">Industrial Factory Solar Array</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_18.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_18.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/page_18.png" download class="btn-action">📥 High-Res</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 9: Residential Solar Site -->
+      <div class="media-card" data-cat="residential">
+        <img src="Reference/page_27.png" class="media-thumb" onclick="openLightbox(this.src)" alt="Residential Rooftop Solar" />
+        <div class="media-info">
+          <div>
+            <span class="media-category">Residential Solar</span>
+            <h3 class="media-title">18kWp Premium Residential Rooftop Solar</h3>
+            <div class="cdn-url-box">https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_27.png</div>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button onclick="copyCdnUrl('https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-media/page_27.png')" class="btn-action">📋 Copy R2 URL</button>
+            <a href="Reference/page_27.png" download class="btn-action">📥 High-Res</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" class="modal-overlay" onclick="closeLightbox()">
+    <img id="lightboxImg" class="modal-img" src="" alt="Full view" />
+  </div>
+
+  <div id="toastNotification" class="toast"></div>
+
+  <script>
+    function filterGallery(cat, tabBtn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      if (tabBtn) tabBtn.classList.add('active');
+
+      document.querySelectorAll('.media-card').forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxModal').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+
+    function copyCdnUrl(url) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('📋 Copied R2 CDN URL to clipboard!');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      }
+    }
+  </script>
+</body>
+</html>

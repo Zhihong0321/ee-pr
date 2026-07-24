@@ -56,19 +56,29 @@ def call_api(method, path, body=None):
         return None
 
 def analyze_email_with_minimax(subj, sender, body_text):
+    # Strictly instruct LLM to provide ONLY technically executable system options
     prompt_text = f"""Analyze the following corporate email received at Eternalgy PR Office:
 Sender: {sender}
 Subject: {subj}
 Content: {body_text[:800]}
+
+CRITICAL RULE FOR OPTIONS:
+You MUST ONLY list options that our AI system can actually execute on the website/storage.
+DO NOT list external real-world actions like "contact media", "call client", or "issue press release to newspapers".
+ONLY list executable system actions, for example:
+- "🌐 Publish Featured Case Study to Live PR Feed"
+- "📁 Save to Compliance Vault Only"
+- "🖼️ Upload Media Attachments to Cloudflare R2 Gallery"
+- "⏸️ Hold / Archive Notification"
 
 Respond ONLY in strict raw JSON without Markdown formatting:
 {{
   "category": "CERTIFICATE_UPDATE" | "PRESS_RELEASE" | "AWARD_RECOGNITION" | "MEDIA_PHOTO_BATCH",
   "headline": "Clean executive corporate title",
   "summary": "Concise 2-sentence summary",
-  "requires_manager_decision": true or false,
-  "manager_question": "Actionable question for manager if true, else null",
-  "manager_options": ["Option A", "Option B", "Option C"]
+  "requires_manager_decision": true,
+  "manager_question": "Actionable question for manager specifying what system action to take",
+  "manager_options": ["Option 1", "Option 2", "Option 3"]
 }}"""
 
     headers = {
@@ -100,15 +110,15 @@ Respond ONLY in strict raw JSON without Markdown formatting:
                 
             return json.loads(text_resp)
     except Exception as e:
-        print(f"MiniMax-M3 API Exception (using robust fallback): {e}")
+        print(f"MiniMax-M3 API Exception (using robust executable fallback): {e}")
         category = "CERTIFICATE_UPDATE" if ("seda" in subj.lower() or "cert" in subj.lower()) else "PRESS_RELEASE"
         return {
             "category": category,
             "headline": subj or "Corporate Announcement",
-            "summary": f"MiniMax-M3 parsed communication from {sender} regarding {subj}.",
+            "summary": f"Communication from {sender} regarding {subj}.",
             "requires_manager_decision": True,
-            "manager_question": f"New {category} email received: '{subj}'. Select action for PR Hub:",
-            "manager_options": ["📰 Publish Featured PR Release", "📁 Save to Compliance Vault Only", "⏸️ Hold for Manager Review"]
+            "manager_question": f"New {category} email received: '{subj}'. Select executable action for PR Hub:",
+            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"]
         }
 
 def process_incoming_email(email_id, raw_payload=None):
@@ -143,7 +153,7 @@ def process_incoming_email(email_id, raw_payload=None):
             "email_subject": subj,
             "ai_analysis": llm_result.get("summary", ""),
             "question": llm_result.get("manager_question", f"How should we proceed with {subj}?"),
-            "options": llm_result.get("manager_options", ["Approve", "Reject"]),
+            "options": llm_result.get("manager_options", ["🌐 Publish to Live PR Feed", "📁 Save to Vault"]),
             "status": "WAITING_FOR_MANAGER",
             "selected_option": None
         }
@@ -188,6 +198,14 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
 
+        # Serve Dedicated Cloudflare R2 Media Gallery Page
+        if self.path in ["/gallery", "/photos", "/media-library", "/gallery.html"]:
+            gallery_path = os.path.join(MEDIAKIT_DIR, "media_gallery.html")
+            if os.path.exists(gallery_path):
+                with open(gallery_path, "r", encoding="utf-8") as f:
+                    self._send_response(200, f.read(), "text/html; charset=utf-8")
+                return
+
         # Serve API Documentation page for Email Server Team
         if self.path in ["/docs", "/webhook-docs", "/docs.html"]:
             docs_path = os.path.join(MEDIAKIT_DIR, "webhook_docs.html")
@@ -208,8 +226,10 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 "llm_engine": "MiniMax-M3",
                 "cloud_storage": "Cloudflare R2",
                 "r2_bucket": R2_BUCKET_NAME,
+                "r2_public_cdn": R2_PUBLIC_URL,
                 "webhook_endpoint": "/webhook/email-received",
                 "manager_queue_page": "/queue",
+                "media_gallery_page": "/gallery",
                 "documentation": "/docs"
             })
             return
@@ -245,7 +265,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             result = process_incoming_email(email_id, payload)
             self._send_response(200, {
                 "success": True,
-                "message": "Email analyzed by MiniMax-M3 LLM, tasks & questions generated, marked as read on EE-Mail server.",
+                "message": "Email analyzed by MiniMax-M3 LLM, executable tasks & questions generated, marked as read on EE-Mail server.",
                 "data": result
             })
             return
@@ -284,7 +304,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
-    print(f"Starting Eternalgy PR AI Server with Standalone Queue Portal on port {PORT}...")
+    print(f"Starting Eternalgy PR AI Server on port {PORT} with R2 Gallery & Strict LLM Bounds...")
     server = socketserver.TCPServer(("", PORT), PRServerHandler)
     try:
         server.serve_forever()
