@@ -540,6 +540,105 @@
       color: var(--text-muted);
       font-size: 13.5px;
     }
+
+    /* Responsive Mobile Styles */
+    @media (max-width: 1024px) {
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 13px; }
+    }
+
+    @media (max-width: 900px) {
+      header { padding: 10px 0; }
+      .nav-inner {
+        flex-direction: column;
+        height: auto;
+        padding: 12px 0;
+        gap: 12px;
+      }
+      .nav-links {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 6px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .nav-links::-webkit-scrollbar { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 0 16px; }
+      .hero-section { padding: 35px 0 25px; }
+      .hero-title { font-size: clamp(1.75rem, 6.5vw, 3rem); }
+      .hero-subtitle { font-size: 14.5px; margin-bottom: 20px; }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .stat-card { padding: 16px 10px; border-radius: 14px; }
+      .stat-number { font-size: 22px; }
+      .stat-label { font-size: 11px; }
+
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .section { padding: 32px 0; }
+      .section-title { font-size: 22px; }
+      .card, .cert-doc-card { padding: 18px; border-radius: 16px; }
+
+      .vault-filter-container, .logo-filter-container {
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+        white-space: nowrap;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .vault-filter-container::-webkit-scrollbar,
+      .logo-filter-container::-webkit-scrollbar { display: none; }
+
+      .overview-modal { padding: 10px; }
+      .overview-modal__content { max-height: 94vh; border-radius: 16px; }
+      .overview-modal__header { padding: 14px 16px; }
+      .overview-modal__body { padding: 14px; max-height: 65vh; }
+      .overview-modal__footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 14px;
+      }
+      .overview-modal__footer a { width: 100%; justify-content: center; }
+
+      .toast {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 16px;
+      }
+
+      footer {
+        margin-top: 40px;
+        padding: 30px 0 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-text h1 { font-size: 17px; }
+      .brand-text p { font-size: 9.5px; }
+      .btn-cta { padding: 8px 12px; font-size: 12px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat-number { font-size: 19px; }
+    }
   </style>
 </head>
 <body>
