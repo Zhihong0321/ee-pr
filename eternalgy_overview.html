@@ -897,6 +897,35 @@
       modal.classList.remove('is-open');
       document.body.style.overflow = '';
     }
+
+    function approveDraft(draftId, title) {
+      const card = document.getElementById('draft-card-' + draftId);
+      if (card) {
+        card.style.borderColor = '#10b981';
+        card.style.background = 'rgba(16, 185, 129, 0.15)';
+        card.innerHTML = `
+          <div>
+            <span class="badge-tag" style="background: #10b981; color: #040906; font-weight: 800;">PUBLISHED TO PR HUB</span>
+            <h4 style="font-family: var(--font-heading); font-size: 18px; font-weight: 800; color: #fff; margin-top: 10px;">${title}</h4>
+            <p style="font-size: 13px; color: #34d399; margin-top: 6px;">Approved by Manager &amp; Synced to Live Corporate Feed</p>
+          </div>
+        `;
+        showToast('Draft #' + draftId + ' Approved & Published!');
+      }
+    }
+
+    function rejectDraft(draftId) {
+      const card = document.getElementById('draft-card-' + draftId);
+      if (card) {
+        card.style.opacity = '0.4';
+        showToast('Draft #' + draftId + ' Discarded.');
+      }
+    }
+
+    function scanIncomingEmails() {
+      showToast('Scanning EE-Mail Server (pr@eternalgy.me)...');
+    }
+
   </script>
 </body>
 </html>

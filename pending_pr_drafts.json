@@ -1,0 +1,52 @@
+[
+  {
+    "draft_id": "DRAFT-2114",
+    "email_id": 2114,
+    "category": "PRESS_RELEASE",
+    "headline": "\u60a8\u7684 pCloud \u5e33\u6236\u6709\u65b0\u767b\u5165\u8a18\u9304",
+    "sender": "System Sender",
+    "received_at": "2026-07-24T07:00:45.809Z",
+    "summary": "Incoming corporate communication regarding \u60a8\u7684 pCloud \u5e33\u6236\u6709\u65b0\u767b\u5165\u8a18\u9304. Queued for manager approval.",
+    "status": "PENDING_MANAGER_APPROVAL"
+  },
+  {
+    "draft_id": "DRAFT-2113",
+    "email_id": 2113,
+    "category": "PRESS_RELEASE",
+    "headline": "Your authentication code",
+    "sender": "System Sender",
+    "received_at": "2026-07-24T06:46:56.954Z",
+    "summary": "Incoming corporate communication regarding Your authentication code. Queued for manager approval.",
+    "status": "PENDING_MANAGER_APPROVAL"
+  },
+  {
+    "draft_id": "DRAFT-2112",
+    "email_id": 2112,
+    "category": "PRESS_RELEASE",
+    "headline": "Your temporary ChatGPT login code",
+    "sender": "System Sender",
+    "received_at": "2026-07-24T06:45:49.528Z",
+    "summary": "Incoming corporate communication regarding Your temporary ChatGPT login code. Queued for manager approval.",
+    "status": "PENDING_MANAGER_APPROVAL"
+  },
+  {
+    "draft_id": "DRAFT-2111",
+    "email_id": 2111,
+    "category": "PRESS_RELEASE",
+    "headline": "Introducing Inspec-Ther: Digital Twin Intelligence for Your Solar Assets",
+    "sender": "System Sender",
+    "received_at": "2026-07-24T03:20:28.640Z",
+    "summary": "Incoming corporate communication regarding Introducing Inspec-Ther: Digital Twin Intelligence for Your Solar Assets. Queued for manager approval.",
+    "status": "PENDING_MANAGER_APPROVAL"
+  },
+  {
+    "draft_id": "DRAFT-2110",
+    "email_id": 2110,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202617521: Approval for eATAP Application",
+    "sender": "System Sender",
+    "received_at": "2026-07-24T02:44:44.489Z",
+    "summary": "Incoming corporate communication regarding ATP202617521: Approval for eATAP Application. Queued for manager approval.",
+    "status": "PENDING_MANAGER_APPROVAL"
+  }
+]
