@@ -1,63 +1,178 @@
 [
   {
-    "draft_id": "DRAFT-589112fd-439f-4213-9343-5192a759ec87",
-    "email_id": "589112fd-439f-4213-9343-5192a759ec87",
-    "category": "CERTIFICATE_UPDATE",
-    "headline": "ATP202617521: Approval for eATAP Application",
-    "sender": "noreply@seda.gov.my",
-    "received_at": "2026-07-24T07:35:23.102711Z",
-    "summary": "Received via pr@eternalgy.me webhook. Formatted into PR update card.",
-    "status": "PENDING_MANAGER_APPROVAL",
-    "marked_as_read": true
-  },
-  {
     "draft_id": "DRAFT-2114",
     "email_id": 2114,
     "category": "PRESS_RELEASE",
     "headline": "\u60a8\u7684 pCloud \u5e33\u6236\u6709\u65b0\u767b\u5165\u8a18\u9304",
-    "sender": "System Sender",
+    "sender": "",
     "received_at": "2026-07-24T07:00:45.809Z",
-    "summary": "Incoming corporate communication regarding \u60a8\u7684 pCloud \u5e33\u6236\u6709\u65b0\u767b\u5165\u8a18\u9304. Queued for manager approval.",
-    "status": "PENDING_MANAGER_APPROVAL"
+    "summary": "\u60a8\u525b\u525b\u662f\u5426\u767b\u5165\u4e86\uff1f\n\n\u6211\u5011\u6ce8\u610f\u5230\u60a8\u7684 pCloud \u5e33\u6236\u6709\u4e00\u500b\u65b0\u7684\u767b\u5165\u5617\u8a66\uff0c\u6211\u5011\u60f3\u78ba\u8a8d\u662f\u5426\u78ba\u5be6\u662f\u60a8\u672c\u4eba\uff1a\n\npCloud \u5e33\u6236\uff1a\n\nmasterkey@eternalgy.me\n\nIP\u5730\u5740\u3002\n54.219.126.176 (US)\n\n\u88dd\u7f6e\uff1a\n\nWeb (Windows 10.0, Chrome 150)\n\n\u6642\u9593\uff1a\n\nFri, 24 Jul 2026 07:00:26 (UTC)\n\n\u9a57\u8b49\u767c\u4ef6\u4eba\u5730\u5740\uff1a\u6b63\u7248pCloud\u96fb\u5b50\u90f5\u4ef6\u50c5\u4f86\u81ea\u4ee5\u4e0b\u57df\uff1apcloud.com,pcloud.email\n\n\u5982\u679c\u4e0d\u662f\u60a8\u672c...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
   },
   {
     "draft_id": "DRAFT-2113",
     "email_id": 2113,
     "category": "PRESS_RELEASE",
     "headline": "Your authentication code",
-    "sender": "System Sender",
+    "sender": "",
     "received_at": "2026-07-24T06:46:56.954Z",
-    "summary": "Incoming corporate communication regarding Your authentication code. Queued for manager approval.",
-    "status": "PENDING_MANAGER_APPROVAL"
+    "summary": "[https://cdn.openai.com/API/logo-assets/openai-logo-email-header-1.png]\n\nYour authentication code\n\nPlease use the following code to help verify your identity:\n\n151066\n\nBest,\nOpenAI\n\nIf you have any questions please contact us through our help center\n...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
   },
   {
     "draft_id": "DRAFT-2112",
     "email_id": 2112,
     "category": "PRESS_RELEASE",
     "headline": "Your temporary ChatGPT login code",
-    "sender": "System Sender",
+    "sender": "",
     "received_at": "2026-07-24T06:45:49.528Z",
-    "summary": "Incoming corporate communication regarding Your temporary ChatGPT login code. Queued for manager approval.",
-    "status": "PENDING_MANAGER_APPROVAL"
+    "summary": "OpenAI [https://cdn.openai.com/API/logo-assets/openai-logo-email-header-2.png]\n\nEnter this temporary verification code to continue:\n\n932171\n\nDidn't request a verification code? You can ignore this email.\n\n\nBest,\nThe ChatGPT team\n\n\n\nOpenAI [https://cd...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
   },
   {
     "draft_id": "DRAFT-2111",
     "email_id": 2111,
     "category": "PRESS_RELEASE",
     "headline": "Introducing Inspec-Ther: Digital Twin Intelligence for Your Solar Assets",
-    "sender": "System Sender",
+    "sender": "",
     "received_at": "2026-07-24T03:20:28.640Z",
-    "summary": "Incoming corporate communication regarding Introducing Inspec-Ther: Digital Twin Intelligence for Your Solar Assets. Queued for manager approval.",
-    "status": "PENDING_MANAGER_APPROVAL"
+    "summary": "[image: Inspec-ther FB AI-powered solar asset intelligence.png]\nDear ETERNALGY Team,\n\nAs solar portfolios expand, managing large-scale assets using static\nspreadsheets and traditional manual reporting leaves a critical blind spot.\nAt STRATETICS EXPER...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 2
   },
   {
     "draft_id": "DRAFT-2110",
     "email_id": 2110,
     "category": "CERTIFICATE_UPDATE",
     "headline": "ATP202617521: Approval for eATAP Application",
-    "sender": "System Sender",
+    "sender": "",
     "received_at": "2026-07-24T02:44:44.489Z",
-    "summary": "Incoming corporate communication regarding ATP202617521: Approval for eATAP Application. Queued for manager approval.",
-    "status": "PENDING_MANAGER_APPROVAL"
+    "summary": "ATP202617521: Approval for eATAP Application...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2109",
+    "email_id": 2109,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202617519: Approval for eATAP Application",
+    "sender": "",
+    "received_at": "2026-07-24T02:41:17.118Z",
+    "summary": "APPLICATION APPROVED!\n\n\nDEAR MDM KOK MING CHOO,\n\nCongratulations!\nYour Solar ATAP application has been approved. You will be notified once the\ndigital certificate is ready to be viewed and downloaded.\n\n\nAPPLICATION DETAILS\n\nApplicant: KOK MING CHOO\nA...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2104",
+    "email_id": 2104,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619511 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:54:04.459Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MDM CHEW CZE YIN,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (10) work...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2103",
+    "email_id": 2103,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619523 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:50:54.817Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MDM LOH WEI SIN,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (10) worki...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2102",
+    "email_id": 2102,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619525 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:49:37.432Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MR. CHEN YEOW KOON,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (10) wo...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2101",
+    "email_id": 2101,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619533 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:48:16.895Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MR. LEONG YEU JIAN,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (10) wo...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2100",
+    "email_id": 2100,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619541 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:46:43.216Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MR. PARTHIBAN A/L NADASEN,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten ...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2099",
+    "email_id": 2099,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619568 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:45:22.493Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MR OOI CHIN NAM,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (10) worki...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2097",
+    "email_id": 2097,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202619572 : Successful payment - eATAP Application Fee",
+    "sender": "",
+    "received_at": "2026-07-23T23:43:37.335Z",
+    "summary": "PAYMENT CONFIRMATION\n\n\nDEAR MDM ZURAINI BINTI NASIR,\n\nPayment Successful!\n\n\nThank you for your payment made on Solar ATAP application fee. SEDA Malaysia\nshall verify your application. You will be notified the outcome of your\napplication within ten (1...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2090",
+    "email_id": 2090,
+    "category": "AWARD_RECOGNITION",
+    "headline": "Re: ETERNALGY SDN BHD: Nomination Notice for SME Excellence Business Award 2026/2027",
+    "sender": "",
+    "received_at": "2026-07-23T08:19:10.784Z",
+    "summary": "Dear Mr. Gan Lai Soon\n\nI hope this email finds you well.\n\nFollowing our recent invitation for ETERNALGY SDN BHD to be nominated for the SME Excellence Business Award 2026/2027, we would like to confirm your interest in proceeding with the application...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 7
+  },
+  {
+    "draft_id": "DRAFT-2087",
+    "email_id": 2087,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "eATAP - Application Submitted - Awaiting Fee Payment",
+    "sender": "",
+    "received_at": "2026-07-23T06:32:38.502Z",
+    "summary": "EATAP APPLICATION\n\n\nDEAR MR LOW BOON HUAT,\n\nTo complete your submission, the application fee must be paid within seven (7)\ncalendar days from the date of this email. Your Solar ATAP application will be\nprocessed once payment of the application fee is...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
+  },
+  {
+    "draft_id": "DRAFT-2086",
+    "email_id": 2086,
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "eATAP - Application Submitted - Awaiting Fee Payment",
+    "sender": "",
+    "received_at": "2026-07-23T06:25:04.288Z",
+    "summary": "EATAP APPLICATION\n\n\nDEAR MDM ZURAINI BINTI NASIR,\n\nTo complete your submission, the application fee must be paid within seven (7)\ncalendar days from the date of this email. Your Solar ATAP application will be\nprocessed once payment of the application...",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "attachments_count": 0
   }
 ]

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-24T17:15:00Z",
+  "last_updated": "2026-07-24T17:28:00Z",
   "metrics": {
     "installed_kwp": 10750.99,
     "installed_mwp": 10.75,
@@ -10,6 +10,38 @@
     "last_verified": "2026-07-24"
   },
   "manager_questions": [
+    {
+      "question_id": "Q-2109",
+      "email_id": 2109,
+      "timestamp": "2026-07-24T02:41:17Z",
+      "category": "CERTIFICATE_UPDATE",
+      "email_subject": "ATP202617519: Approval for eATAP Application - Kok Ming Choo",
+      "ai_analysis": "SEDA Solar ATAP digital certificate application approved for client Kok Ming Choo (ATP202617519).",
+      "question": "New SEDA Solar ATAP Certificate approved for Kok Ming Choo. Select action for PR Hub:",
+      "options": [
+        "\ud83d\udcd1 Publish to Verified Customer Installation Feed",
+        "\ud83d\udcc1 Save to SEDA Compliance Vault",
+        "\u23f8\ufe0f Hold for Batch Update"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    },
+    {
+      "question_id": "Q-2090",
+      "email_id": 2090,
+      "timestamp": "2026-07-23T08:19:10Z",
+      "category": "AWARD_RECOGNITION",
+      "email_subject": "Nomination Notice for SME Excellence Business Award 2026/2027",
+      "ai_analysis": "Official nomination notice received for ETERNALGY SDN BHD / Mr. Gan Lai Soon for the SME Excellence Business Award 2026/2027. Includes 7 document attachments for registration.",
+      "question": "Official nomination received for SME Excellence Business Award 2026/2027. How should we proceed?",
+      "options": [
+        "\ud83c\udfc6 Confirm nomination & submit official application",
+        "\ud83d\udcf0 Issue corporate announcement to media & partners",
+        "\ud83d\udcc1 Archive nomination in compliance records"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    },
     {
       "question_id": "Q-2121",
       "email_id": 2121,
