@@ -1147,6 +1147,18 @@
     }
 
 
+    
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      if (toast) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+      } else {
+        alert(msg);
+      }
+    }
+
     async function loadDashboardState() {
       try {
         const response = await fetch('/api/dashboard-state');
@@ -1164,13 +1176,18 @@
           } else {
             consoleEl.innerHTML = state.manager_questions.map(q => {
               const isResolved = q.status === 'RESOLVED';
-              const optionsHtml = (q.options || []).map(opt => `
-                <button onclick="submitManagerChoice('${q.question_id}', '${opt.replace(/'/g, "\'")}')" 
-                        class="btn-cta ${isResolved && q.selected_option === opt ? 'btn-primary' : 'btn-outline'}" 
-                        style="padding: 8px 14px; font-size: 12.5px;" ${isResolved ? 'disabled' : ''}>
-                  ${opt} ${isResolved && q.selected_option === opt ? '✓' : ''}
-                </button>
-              `).join('');
+              const optionsHtml = (q.options || []).map((opt, idx) => {
+                const safeOpt = opt.replace(/"/g, '&quot;');
+                return `
+                  <button type="button" 
+                          class="btn-cta ${isResolved && q.selected_option === opt ? 'btn-primary' : 'btn-outline'} manager-option-btn" 
+                          data-qid="${q.question_id}" 
+                          data-option="${safeOpt}"
+                          style="padding: 8px 14px; font-size: 12.5px; margin-bottom: 6px;" ${isResolved ? 'disabled' : ''}>
+                    ${opt} ${isResolved && q.selected_option === opt ? '✓' : ''}
+                  </button>
+                `;
+              }).join('');
 
               return `
                 <div class="card" style="border: 1px solid ${isResolved ? '#10b981' : 'rgba(245, 158, 11, 0.4)'}; background: ${isResolved ? 'rgba(16, 185, 129, 0.08)' : 'linear-gradient(180deg, var(--bg-card) 0%, rgba(245, 158, 11, 0.06) 100%)'};">
@@ -1192,6 +1209,15 @@
                 </div>
               `;
             }).join('');
+
+            // Attach click event listeners safely
+            document.querySelectorAll('.manager-option-btn').forEach(btn => {
+              btn.addEventListener('click', function() {
+                const qid = this.getAttribute('data-qid');
+                const opt = this.getAttribute('data-option');
+                submitManagerChoice(qid, opt);
+              });
+            });
           }
         }
       } catch (err) {
@@ -1211,11 +1237,14 @@
         if (result.success) {
           showToast('✅ Manager Choice Applied! Frontpage updated.');
           await loadDashboardState();
+        } else {
+          alert('Error: ' + (result.error || 'Failed to save choice'));
         }
       } catch (err) {
         showToast('Error saving choice: ' + err.message);
       }
     }
+
 
     // Call on load
     document.addEventListener('DOMContentLoaded', loadDashboardState);
