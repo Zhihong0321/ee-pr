@@ -760,7 +760,7 @@
           <div class="stat-label">Customer Revenue (RM 28.15M)</div>
           <div class="stat-date-badge">
             <span>📅 Checked:</span>
-            <span id="date-revenue">2026-07-24 18:02:00 GMT+8</span>
+            <span id="date-revenue">2026-07-24 18:04:09 GMT+8</span>
           </div>
         </div>
 
@@ -769,7 +769,7 @@
           <div class="stat-label">Installed Capacity (10.75 MWp)</div>
           <div class="stat-date-badge">
             <span>📅 Checked:</span>
-            <span id="date-kwp">2026-07-24 18:02:00 GMT+8</span>
+            <span id="date-kwp">2026-07-24 18:04:09 GMT+8</span>
           </div>
         </div>
 
@@ -778,34 +778,7 @@
           <div class="stat-label">Installed Projects (&ge;59.9% Paid)</div>
           <div class="stat-date-badge">
             <span>📅 Checked:</span>
-            <span id="date-projects">2026-07-24 18:02:00 GMT+8</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-number" id="stat-seda">11,485</div>
-          <div class="stat-label">SEDA Project Registrations</div>
-          <div class="stat-date-badge">
-            <span>📅 Checked:</span>
-            <span id="date-seda">2026-07-24 18:02:00 GMT+8</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-number" id="stat-clients">7,177</div>
-          <div class="stat-label">Verified Client Accounts</div>
-          <div class="stat-date-badge">
-            <span>📅 Checked:</span>
-            <span id="date-clients">2026-07-24 18:02:00 GMT+8</span>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-number" id="stat-invoices">8,107</div>
-          <div class="stat-label">Invoices Managed (RM 29.28M)</div>
-          <div class="stat-date-badge">
-            <span>📅 Checked:</span>
-            <span id="date-invoices">2026-07-24 18:02:00 GMT+8</span>
+            <span id="date-projects">2026-07-24 18:04:09 GMT+8</span>
           </div>
         </div>
       </div>
@@ -1577,20 +1550,8 @@
         const proj = m.installed_projects_count ? m.installed_projects_count + ' Projects' : '925 Projects';
         document.getElementById('stat-projects').textContent = proj;
       }
-      if (document.getElementById('stat-seda')) {
-        const seda = m.seda_registrations_count ? Number(m.seda_registrations_count).toLocaleString('en-US') : '11,485';
-        document.getElementById('stat-seda').textContent = seda;
-      }
-      if (document.getElementById('stat-clients')) {
-        const clients = m.total_clients_count ? Number(m.total_clients_count).toLocaleString('en-US') : '7,177';
-        document.getElementById('stat-clients').textContent = clients;
-      }
-      if (document.getElementById('stat-invoices')) {
-        const inv = m.total_invoices_count ? Number(m.total_invoices_count).toLocaleString('en-US') : '8,107';
-        document.getElementById('stat-invoices').textContent = inv;
-      }
 
-      const dateEls = ['date-revenue', 'date-kwp', 'date-projects', 'date-seda', 'date-clients', 'date-invoices'];
+      const dateEls = ['date-revenue', 'date-kwp', 'date-projects'];
       dateEls.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = checkDate;
