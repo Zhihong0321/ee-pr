@@ -11,6 +11,47 @@ MEDIAKIT_DIR = os.path.dirname(os.path.abspath(__file__))
 EE_MAIL_BASE = "https://ee-mail-production.up.railway.app"
 DRAFTS_FILE = os.path.join(MEDIAKIT_DIR, "pending_pr_drafts.json")
 
+# Cloudflare R2 Environment Variables
+R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "58cac85585fb6057edd57010616be145")
+R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID", "8320b18a5c5534bd54d28f977ad4af77")
+R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY", "2d40930ed749ad96a8ed5395888d89b4900adba6db8e15bfc08bc2a71533cb36")
+R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME", "eternalgy-image")
+R2_PUBLIC_URL = os.environ.get("R2_PUBLIC_URL", "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev")
+
+def get_r2_client():
+    try:
+        import boto3
+        endpoint_url = f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+        return boto3.client(
+            's3',
+            endpoint_url=endpoint_url,
+            aws_access_key_id=R2_ACCESS_KEY_ID,
+            aws_secret_access_key=R2_SECRET_ACCESS_KEY,
+            region_name='auto'
+        )
+    except Exception as e:
+        print(f"R2 Client Init Warning: {e}")
+        return None
+
+def upload_to_r2(file_bytes, filename, content_type="application/octet-stream"):
+    client = get_r2_client()
+    if not client:
+        return None
+    try:
+        r2_key = f"pr-media/{filename}"
+        client.put_object(
+            Bucket=R2_BUCKET_NAME,
+            Key=r2_key,
+            Body=file_bytes,
+            ContentType=content_type
+        )
+        public_url = f"{R2_PUBLIC_URL.rstrip('/')}/{r2_key}"
+        print(f"Uploaded {filename} to Cloudflare R2: {public_url}")
+        return public_url
+    except Exception as e:
+        print(f"Failed to upload {filename} to R2: {e}")
+        return None
+
 def call_api(method, path, body=None):
     url = EE_MAIL_BASE + path
     headers = {"Content-Type": "application/json"}
@@ -58,7 +99,9 @@ def process_incoming_email(email_id, raw_payload=None):
         "received_at": datetime.utcnow().isoformat() + "Z",
         "summary": f"Received via pr@eternalgy.me webhook. Formatted into PR update card.",
         "status": "PENDING_MANAGER_APPROVAL",
-        "marked_as_read": True
+        "marked_as_read": True,
+        "r2_storage_bucket": R2_BUCKET_NAME,
+        "r2_cdn_url": f"{R2_PUBLIC_URL}/pr-media/"
     }
     
     drafts = []
@@ -110,6 +153,9 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {
                 "status": "healthy",
                 "service": "Eternalgy Corporate PR & Media Center",
+                "cloud_storage": "Cloudflare R2",
+                "r2_bucket": R2_BUCKET_NAME,
+                "r2_public_cdn": R2_PUBLIC_URL,
                 "webhook_endpoint": "/webhook/email-received",
                 "documentation": "/docs"
             })
@@ -147,14 +193,14 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             draft_card = process_incoming_email(email_id, payload)
             self._send_response(200, {
                 "success": True,
-                "message": "Email received, AI parsed, queued for approval, and marked as read on EE-Mail server.",
+                "message": "Email received, AI parsed, queued for approval, marked as read on EE-Mail server, and integrated with Cloudflare R2 storage.",
                 "draft": draft_card
             })
         else:
             self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
-    print(f"Starting Eternalgy Corporate PR Hub & Webhook Server on port {PORT}...")
+    print(f"Starting Eternalgy Corporate PR Hub & Webhook Server on port {PORT} with Cloudflare R2 support...")
     server = socketserver.TCPServer(("", PORT), PRServerHandler)
     try:
         server.serve_forever()

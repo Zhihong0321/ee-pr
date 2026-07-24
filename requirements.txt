@@ -1,1 +1,1 @@
-# Standard Python library dependencies used
+boto3>=1.28.0

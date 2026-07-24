@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Data Mover Manager: R2 → pCloud</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div>
+          <h1 class="logo-title">Local Data Mover Manager</h1>
+          <p class="logo-subtitle">Cloudflare R2 ➔ pCloud Public Folder (Bound to 127.0.0.1)</p>
+        </div>
+      </div>
+      <div>
+        <button id="btnCheckConn" class="btn btn-secondary" onclick="checkConnections()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          Refresh Diagnostic Connections
+        </button>
+      </div>
+    </header>
+
+    <!-- Connection Health Status Grid -->
+    <div class="dashboard-grid">
+      <div class="card conn-card">
+        <div class="conn-icon">☁️</div>
+        <div>
+          <div class="conn-title">Cloudflare R2</div>
+          <div id="statusR2" class="conn-status"><span class="badge-dot"></span> Checking...</div>
+        </div>
+      </div>
+
+      <div class="card conn-card">
+        <div class="conn-icon">📁</div>
+        <div>
+          <div class="conn-title">pCloud API</div>
+          <div id="statusPcloud" class="conn-status"><span class="badge-dot"></span> Checking...</div>
+        </div>
+      </div>
+
+      <div class="card conn-card">
+        <div class="conn-icon">🌐</div>
+        <div>
+          <div class="conn-title">filedn.com Public URL</div>
+          <div id="statusFiledn" class="conn-status"><span class="badge-dot"></span> Checking...</div>
+        </div>
+      </div>
+
+      <div class="card conn-card">
+        <div class="conn-icon">🗄️</div>
+        <div>
+          <div class="conn-title">PostgreSQL Proxy</div>
+          <div id="statusPg" class="conn-status"><span class="badge-dot"></span> Checking...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discovery & Selection Section -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="section-header">
+        <h2 class="section-title">🔍 Discovery & Candidate Selection</h2>
+        <div style="display: flex; gap: 10px;">
+          <button id="btnDryRun" class="btn" onclick="startMigration('dry-run')">
+            ▶️ Run Dry-Run Batch
+          </button>
+          <button id="btnLiveRun" class="btn btn-danger" onclick="confirmLiveMigration()">
+            ⚡ Start Live Migration Batch
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="form-group">
+          <label class="form-label" for="filterAge">Age Threshold (Days):</label>
+          <input type="number" id="filterAge" value="60" min="0" style="width: 90px;" onchange="fetchDiscovery()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="filterStatus">SEDA Status:</label>
+          <select id="filterStatus" onchange="fetchDiscovery()">
+            <option value="Approved" selected>Approved</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+
+        <button class="btn btn-secondary" onclick="fetchDiscovery()">Search Candidates</button>
+        <span id="discoveryCount" style="margin-left: auto; font-size: 13px; color: var(--text-muted);">0 candidates found</span>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 40px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
+              <th>DB ID</th>
+              <th>Applicant</th>
+              <th>Status</th>
+              <th>Column Name</th>
+              <th>Original Document URL</th>
+              <th>Target pCloud Public URL</th>
+            </tr>
+          </thead>
+          <tbody id="candidateTableBody">
+            <tr>
+              <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                Click "Search Candidates" to load eligible files from PostgreSQL...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Active Job & Log Monitor -->
+    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+      
+      <!-- Job Progress Card -->
+      <div class="card">
+        <div class="section-header">
+          <h2 class="section-title">⚙️ Active Batch Progress</h2>
+          <div id="jobModeBadge" style="font-size: 12px; padding: 4px 10px; border-radius: 12px; background: rgba(99, 102, 241, 0.2); color: var(--primary);">IDLE</div>
+        </div>
+
+        <div class="progress-bar-bg">
+          <div id="progressBarFill" class="progress-bar-fill"></div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+          <span>Progress: <strong id="jobProgressText" style="color: var(--text-main);">0 / 0</strong></span>
+          <span>Completed: <strong id="jobCompletedCount" style="color: var(--success);">0</strong> | Failed: <strong id="jobFailedCount" style="color: var(--danger);">0</strong></span>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button id="btnPause" class="btn btn-secondary" onclick="controlJob('pause')" disabled>Pause</button>
+          <button id="btnResume" class="btn btn-secondary" onclick="controlJob('resume')" disabled>Resume</button>
+          <button id="btnStop" class="btn btn-danger" onclick="controlJob('stop')" disabled>Stop</button>
+        </div>
+      </div>
+
+      <!-- Live Terminal Log -->
+      <div class="card">
+        <div class="section-header">
+          <h2 class="section-title">📜 Real-time System Log</h2>
+          <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 12px;" onclick="clearLogs()">Clear</button>
+        </div>
+
+        <div id="terminalWindow" class="terminal-window">
+          <div class="log-entry info">[SYSTEM] Local Data Mover Manager initialized and bound to 127.0.0.1</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- History & Rollback Journal Section -->
+    <div class="card" style="margin-top: 24px;">
+      <div class="section-header">
+        <h2 class="section-title">🛡️ Migration History & One-Click Rollback Journal</h2>
+        <button class="btn btn-secondary" onclick="fetchHistory()">Refresh History</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Batch ID</th>
+              <th>Record ID</th>
+              <th>Column</th>
+              <th>State</th>
+              <th>Target pCloud URL</th>
+              <th>Error Details</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 20px;">No migration history yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
