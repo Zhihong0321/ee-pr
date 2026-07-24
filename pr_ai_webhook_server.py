@@ -3,11 +3,12 @@ import socketserver
 import json
 import urllib.request
 import os
+import mimetypes
 from datetime import datetime
 
 PORT = int(os.environ.get("PORT", 8080))
+MEDIAKIT_DIR = os.path.dirname(os.path.abspath(__file__))
 EE_MAIL_BASE = "https://ee-mail-production.up.railway.app"
-MEDIAKIT_DIR = r"D:\001-eternalgy-mediakit"
 DRAFTS_FILE = os.path.join(MEDIAKIT_DIR, "pending_pr_drafts.json")
 
 def call_api(method, path, body=None):
@@ -25,12 +26,8 @@ def call_api(method, path, body=None):
 
 def process_incoming_email(email_id, raw_payload=None):
     print(f"Processing incoming email notification: {email_id}...")
-    
-    # 1. Fetch content from EE-Mail server (this automatically marks email as read)
     fetch_res = call_api("POST", "/received-emails/fetch", {"email_id": email_id})
-    print(f"EE-Mail Fetch Result: {fetch_res}")
     
-    # 2. Get full details
     subj = raw_payload.get("subject", "") if raw_payload else ""
     sender = raw_payload.get("from", "") if raw_payload else ""
     
@@ -43,7 +40,6 @@ def process_incoming_email(email_id, raw_payload=None):
     if not subj:
         subj = f"PR Communication (ID: {email_id})"
         
-    # AI Classification
     category = "PRESS_RELEASE"
     subj_lower = subj.lower()
     if "seda" in subj_lower or "atap" in subj_lower or "cert" in subj_lower or "approval" in subj_lower:
@@ -65,7 +61,6 @@ def process_incoming_email(email_id, raw_payload=None):
         "marked_as_read": True
     }
     
-    # Save draft to pending_pr_drafts.json
     drafts = []
     if os.path.exists(DRAFTS_FILE):
         try:
@@ -74,31 +69,60 @@ def process_incoming_email(email_id, raw_payload=None):
         except Exception:
             drafts = []
             
-    # Avoid duplicate draft
-    if not any(d.get("email_id") == email_id for d in drafts):
+    if not any(str(d.get("email_id")) == str(email_id) for d in drafts):
         drafts.insert(0, draft_card)
         with open(DRAFTS_FILE, "w", encoding="utf-8") as f:
             json.dump(drafts, f, indent=2)
             
     return draft_card
 
-class PRWebhookHandler(http.server.BaseHTTPRequestHandler):
-    def _send_response(self, code, data):
+class PRServerHandler(http.server.BaseHTTPRequestHandler):
+    def _send_response(self, code, data, content_type="application/json"):
         self.send_response(code)
-        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Type", content_type)
         self.end_headers()
-        self.wfile.write(json.dumps(data).encode("utf-8"))
-        
+        if isinstance(data, str):
+            self.wfile.write(data.encode("utf-8"))
+        elif isinstance(data, bytes):
+            self.wfile.write(data)
+        else:
+            self.wfile.write(json.dumps(data).encode("utf-8"))
+
     def do_GET(self):
-        if self.path == "/health" or self.path == "/":
+        # Serve root PR Showcase UI
+        if self.path == "/" or self.path == "/index.html":
+            html_path = os.path.join(MEDIAKIT_DIR, "eternalgy_overview.html")
+            if os.path.exists(html_path):
+                with open(html_path, "r", encoding="utf-8") as f:
+                    self._send_response(200, f.read(), "text/html; charset=utf-8")
+                return
+            else:
+                self._send_response(404, {"error": "eternalgy_overview.html not found"})
+                return
+
+        # Serve Health endpoint
+        if self.path == "/health" or self.path == "/api/health":
             self._send_response(200, {
                 "status": "healthy",
-                "service": "Eternalgy PR AI Webhook Server",
+                "service": "Eternalgy Corporate PR & Media Center",
                 "webhook_endpoint": "/webhook/email-received"
             })
-        else:
-            self._send_response(404, {"error": "Not found"})
-            
+            return
+
+        # Serve static files (Logo/, Reference/, PDFs, JSON)
+        rel_path = self.path.lstrip("/").replace("%20", " ")
+        file_path = os.path.normpath(os.path.join(MEDIAKIT_DIR, rel_path))
+
+        if file_path.startswith(MEDIAKIT_DIR) and os.path.isfile(file_path):
+            ctype, _ = mimetypes.guess_type(file_path)
+            if not ctype:
+                ctype = "application/octet-stream"
+            with open(file_path, "rb") as f:
+                self._send_response(200, f.read(), ctype)
+            return
+
+        self._send_response(404, {"error": f"File or route not found: {self.path}"})
+
     def do_POST(self):
         if self.path == "/webhook/email-received" or self.path == "/api/v1/pr-email-webhook":
             content_length = int(self.headers.get("Content-Length", 0))
@@ -107,15 +131,14 @@ class PRWebhookHandler(http.server.BaseHTTPRequestHandler):
                 payload = json.loads(body_bytes.decode("utf-8"))
             except Exception:
                 payload = {}
-                
+
             email_id = payload.get("email_id") or payload.get("id") or payload.get("email", {}).get("email_id")
-            
+
             if not email_id:
                 self._send_response(400, {"error": "Missing email_id in webhook payload"})
                 return
-                
+
             draft_card = process_incoming_email(email_id, payload)
-            
             self._send_response(200, {
                 "success": True,
                 "message": "Email received, AI parsed, queued for approval, and marked as read on EE-Mail server.",
@@ -125,8 +148,8 @@ class PRWebhookHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
-    print(f"Starting Eternalgy PR AI Webhook Server on port {PORT}...")
-    server = socketserver.TCPServer(("", PORT), PRWebhookHandler)
+    print(f"Starting Eternalgy Corporate PR Hub & Webhook Server on port {PORT}...")
+    server = socketserver.TCPServer(("", PORT), PRServerHandler)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
