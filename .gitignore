@@ -1,0 +1,5 @@
+# Temp files
+*.pyc
+__pycache__/
+.env
+

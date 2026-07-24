@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternalgy Sdn Bhd | Corporate PR Center & Media Hub</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Eternalgy Sdn Bhd - Single Source of Truth Corporate PR Center, Media Kit, CIDB G7 & SEDA Registered RPVSP, Live Production Metrics, Brand Assets & Verified Ad Copy." />
+  <meta name="author" content="Eternalgy Sdn Bhd" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-dark: #060b08;
+      --bg-surface: #0c1510;
+      --bg-card: #122118;
+      --bg-card-hover: #182b20;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #34d399;
+      --primary-glow: rgba(16, 185, 129, 0.25);
+      --accent-gold: #f59e0b;
+      --accent-blue: #3b82f6;
+      --border-color: rgba(52, 211, 153, 0.16);
+      --border-hover: rgba(52, 211, 153, 0.45);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-highlight: #ffffff;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Glow Backgrounds */
+    .ambient-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: floatGlow 14s infinite alternate ease-in-out;
+    }
+    .glow-top-left { top: -200px; left: -150px; }
+    .glow-bottom-right { bottom: -200px; right: -150px; background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(0, 0, 0, 0) 70%); }
+    .glow-center { top: 40%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 800px; opacity: 0.5; }
+
+    @keyframes floatGlow {
+      0% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.1) translateY(30px); }
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Glass Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(6, 11, 8, 0.85);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 76px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: var(--text-highlight);
+    }
+    .brand-logo-container {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.4));
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+      padding: 6px;
+    }
+    .brand-logo-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .brand-text h1 {
+      font-family: var(--font-heading);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .brand-text p {
+      font-size: 11px;
+      color: var(--primary-light);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      list-style: none;
+      align-items: center;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--primary-light); }
+
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13.5px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #040906;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.5);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-outline:hover {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: var(--primary-light);
+      color: #fff;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 65px 0 45px;
+      text-align: center;
+    }
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 40px;
+      color: var(--primary-light);
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--primary-light);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary-light);
+      animation: pulseAnimation 2s infinite;
+    }
+    @keyframes pulseAnimation {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(52, 211, 153, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 30%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      max-width: 820px;
+      margin: 0 auto 32px;
+      font-size: 17.5px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Live Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 22px 14px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+    }
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Section Styling */
+    .section { padding: 55px 0; }
+    .section-header { margin-bottom: 32px; }
+    .section-tag {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--primary-light);
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text-highlight);
+      letter-spacing: -0.02em;
+    }
+
+    /* Grids & Cards */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--text-highlight);
+      margin-bottom: 10px;
+    }
+    .card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      background: rgba(16, 185, 129, 0.14);
+      color: var(--primary-light);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+
+    /* Feature Copy & Toast Copy Notification */
+    .copy-card {
+      background: rgba(18, 33, 24, 0.9);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      transition: border-color 0.25s ease;
+    }
+    .copy-card:hover {
+      border-color: var(--primary-light);
+    }
+    .copy-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary-light);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .copy-card-text {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    /* Notification Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--primary);
+      color: #040906;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 100000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Asset Grid Card */
+    .asset-item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .asset-item-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-light);
+    }
+    .asset-img-box {
+      height: 80px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+    .asset-img-box img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    /* Document Gallery Cards */
+    .cert-doc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+    .cert-doc-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+    .cert-preview-box {
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      background: #050a07;
+      position: relative;
+      cursor: pointer;
+      height: 170px;
+    }
+    .cert-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      opacity: 0.88;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+    .cert-preview-box:hover img {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    .cert-overlay-tag {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 30%, rgba(6, 11, 8, 0.9) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 12px 14px;
+      color: var(--primary-light);
+      font-size: 12px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    /* Lightbox Modal */
+    .overview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .overview-modal.is-open { opacity: 1; pointer-events: auto; }
+    .overview-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 5, 0.88);
+      backdrop-filter: blur(12px);
+    }
+    .overview-modal__content {
+      position: relative;
+      z-index: 10;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hover);
+      border-radius: 20px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .overview-modal__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(6, 11, 8, 0.95);
+    }
+    .overview-modal__close {
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .overview-modal__body {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      background: #040805;
+      max-height: 70vh;
+    }
+    .overview-modal__img {
+      max-width: 100%;
+      height: auto;
+      max-height: 65vh;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+    .overview-modal__footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: rgba(6, 11, 8, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 45px 0 25px;
+      margin-top: 70px;
+      background: #040805;
+      color: var(--text-muted);
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-logo-container">
+          <img src="Logo/eternalgy.png" alt="Eternalgy Logo" />
+        </div>
+        <div class="brand-text">
+          <h1>ETERNALGY</h1>
+          <p>Sdn Bhd · 202301029164 (1523087-A)</p>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#live-feed">Live Feed</a></li>
+        <li><a href="#media-kit">Media Kit</a></li>
+        <li><a href="#copywriter-kit">Ad Copy Kit</a></li>
+        <li><a href="#certifications">Certifications</a></li>
+        <li><a href="#products">Products</a></li>
+      </ul>
+
+      <div style="display: flex; gap: 10px;">
+        <a href="Eternalgy_Certifications_All.pdf" target="_blank" download class="btn-cta btn-primary">
+          📥 Cert Bundle (PDF)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-badge-pill">
+        <span class="pulse-dot"></span>
+        <span>Eternalgy AI-Powered Corporate PR &amp; Media Center</span>
+      </div>
+
+      <h2 class="hero-title">
+        Official Single Source of Truth for<br />Media, Assets &amp; Live Performance
+      </h2>
+
+      <p class="hero-subtitle">
+        Access verified company metrics, high-resolution vector logos, certified ad copy claims, live database-synced project records, and national compliance credentials.
+      </p>
+
+      <!-- Live Verified Metrics from Postgres DB -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">10,861.78 kWp</div>
+          <div class="stat-label">Installed Capacity (10.86 MWp)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">935</div>
+          <div class="stat-label">Installed Projects (&ge;59.9% Paid)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">11,485</div>
+          <div class="stat-label">SEDA Project Registrations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">7,177</div>
+          <div class="stat-label">Verified Client Accounts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">8,107</div>
+          <div class="stat-label">Invoices Managed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">60+</div>
+          <div class="stat-label">Staff &amp; Engineers</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phase 1: Live Installed Projects Feed (Synced with Postgres DB) -->
+    <section id="live-feed" class="section">
+      <div class="section-header">
+        <span class="section-tag">Phase 1 · Real-Time DB Engine</span>
+        <h3 class="section-title">Live Installed Projects Feed</h3>
+      </div>
+
+      <div class="grid-3">
+        <div class="card" style="padding: 20px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="badge-tag">#P-25128 · JOHOR</span>
+              <span style="font-size: 12px; color: var(--primary-light); font-weight: 700;">Verified Active</span>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: #fff;">18.0 kWp Installation</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">JinkoSolar 650W TOPCon + SAJ Inverter System</p>
+          </div>
+          <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; font-size: 12px; color: var(--text-muted);">
+            TNB Bi-directional Interconnection Approved
+          </div>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="badge-tag">#P-25127 · JOHOR</span>
+              <span style="font-size: 12px; color: var(--primary-light); font-weight: 700;">Verified Active</span>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: #fff;">17.0 kWp Installation</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Commercial Solar System Deployment</p>
+          </div>
+          <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; font-size: 12px; color: var(--text-muted);">
+            SEDA RPVSP Certified Submission
+          </div>
+        </div>
+
+        <div class="card" style="padding: 20px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="badge-tag">#P-24978 · SELANGOR</span>
+              <span style="font-size: 12px; color: var(--primary-light); font-weight: 700;">Verified Active</span>
+            </div>
+            <h4 style="font-family: var(--font-heading); font-size: 24px; font-weight: 800; color: #fff;">12.0 kWp Installation</h4>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Residential High-Yield Solar Package</p>
+          </div>
+          <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; font-size: 12px; color: var(--text-muted);">
+            1-Year Leak-Proof Workmanship Guaranteed
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phase 2: Designer & Media Kit Asset Hub -->
+    <section id="media-kit" class="section">
+      <div class="section-header">
+        <span class="section-tag">Phase 2 · Designer Media Kit</span>
+        <h3 class="section-title">Official Brand Logos &amp; Vector Assets</h3>
+      </div>
+
+      <div class="grid-4">
+        <!-- Logo 1: Eternalgy -->
+        <div class="asset-item-card">
+          <div class="asset-img-box"><img src="Logo/eternalgy.png" alt="Eternalgy Primary Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">Eternalgy Corporate Logo</h5>
+          <a href="Logo/eternalgy.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Logo 2: JinkoSolar SVG -->
+        <div class="asset-item-card">
+          <div class="asset-img-box"><img src="Logo/Jinko_Solar_logo.svg" alt="JinkoSolar Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">JinkoSolar Official Vector</h5>
+          <a href="Logo/Jinko_Solar_logo.svg" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download SVG 📥</a>
+        </div>
+
+        <!-- Logo 3: SAJ Inverter -->
+        <div class="asset-item-card">
+          <div class="asset-img-box"><img src="Logo/saj-logo.png" alt="SAJ Inverter Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">SAJ Sole Distributor Mark</h5>
+          <a href="Logo/saj-logo.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Logo 4: Golden Bull -->
+        <div class="asset-item-card">
+          <div class="asset-img-box"><img src="Logo/goldenbull.png" alt="Golden Bull Award Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">Golden Bull Award Mark</h5>
+          <a href="Logo/goldenbull.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+      </div>
+
+      <!-- Color Tokens -->
+      <div style="margin-top: 30px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px;">
+        <h4 style="color: #fff; font-size: 16px; margin-bottom: 16px; font-family: var(--font-heading);">Official Brand Palette Color Tokens (Click to Copy)</h4>
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <button onclick="copyToClipboard('#10b981', 'Emerald Green Token')" class="btn-cta btn-outline" style="background: rgba(16,185,129,0.15); border-color: #10b981; color: #34d399;">
+            🟢 Primary Emerald: #10b981
+          </button>
+          <button onclick="copyToClipboard('#060b08', 'Dark Surface Token')" class="btn-cta btn-outline" style="background: #060b08; border-color: rgba(255,255,255,0.2); color: #fff;">
+            ⬛ Dark Background: #060b08
+          </button>
+          <button onclick="copyToClipboard('#122118', 'Card Surface Token')" class="btn-cta btn-outline" style="background: #122118; border-color: rgba(52,211,153,0.3); color: #34d399;">
+            🟩 Card Background: #122118
+          </button>
+          <button onclick="copyToClipboard('#f59e0b', 'Amber Gold Token')" class="btn-cta btn-outline" style="background: rgba(245,158,11,0.15); border-color: #f59e0b; color: #fbbf24;">
+            🟡 Accent Gold: #f59e0b
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Phase 2: Ad Copywriter & Campaign Talking Points Toolkit -->
+    <section id="copywriter-kit" class="section">
+      <div class="section-header">
+        <span class="section-tag">Phase 2 · Ad Copy Repository</span>
+        <h3 class="section-title">Verified Campaign Claims &amp; Selling Points</h3>
+      </div>
+
+      <div class="grid-2">
+        <div class="copy-card" onclick="copyToClipboard('100% Self-Operated In-House Electrical & Structural Engineering Team — Zero Sub-Contractors.', 'Headline Claim 1')">
+          <div class="copy-card-title">Headline Claim · In-House Team (Click to Copy)</div>
+          <div class="copy-card-text">"100% Self-Operated In-House Electrical &amp; Structural Engineering Team — Zero Sub-Contractors."</div>
+        </div>
+
+        <div class="copy-card" onclick="copyToClipboard('1-Year Leak-Proof Workmanship Guarantee + 3-Year MSIG Solar All-Risk Insurance included on all installations.', 'Guarantee Claim 2')">
+          <div class="copy-card-title">Guarantee Claim · Protection (Click to Copy)</div>
+          <div class="copy-card-text">"1-Year Leak-Proof Workmanship Guarantee + 3-Year MSIG Solar All-Risk Insurance included on all installations."</div>
+        </div>
+
+        <div class="copy-card" onclick="copyToClipboard('60% GITA Tax Allowance Eligible via MyHijau MGTC Certification (Cert No: MyHS00025/25).', 'Tax Claim 3')">
+          <div class="copy-card-title">Tax Incentive · GITA Allowance (Click to Copy)</div>
+          <div class="copy-card-text">"60% GITA Tax Allowance Eligible via MyHijau MGTC Certification (Cert No: MyHS00025/25)."</div>
+        </div>
+
+        <div class="copy-card" onclick="copyToClipboard('Highest CIDB Grade G7 Unlimited Tender Capacity Contractor (Registration: 0120250324-WP152634).', 'License Claim 4')">
+          <div class="copy-card-title">Government Grade · CIDB G7 (Click to Copy)</div>
+          <div class="copy-card-text">"Highest CIDB Grade G7 Unlimited Tender Capacity Contractor (Registration: 0120250324-WP152634)."</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certifications Vault Section -->
+    <section id="certifications" class="section">
+      <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span class="section-tag">Official Compliance Vault</span>
+          <h3 class="section-title">National Certifications &amp; Accreditations</h3>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <a href="Eternalgy_Certifications_All.pdf" target="_blank" download class="btn-cta btn-primary">
+            📥 Download All Certifications (PDF)
+          </a>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- CIDB Card -->
+        <div class="cert-doc-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">📜</div>
+              <span class="badge-tag" style="background: var(--primary); color: #040906; font-weight: 800;">GRADE G7</span>
+            </div>
+            <h4 class="card-title">CIDB Grade G7 License</h4>
+            <p class="card-desc">Unlimited contract tender capacity nationwide across Building (B04), Civil (CE21) &amp; Electrical (M15).</p>
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB Grade G7 License')">
+              <img src="Reference/Eternalgy_Cert_CIDB.png" alt="CIDB Cert" />
+              <div class="cert-overlay-tag">🔍 Click to View License ↗</div>
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB License')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+            <a href="Reference/Eternalgy_Cert_CIDB.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
+          </div>
+        </div>
+
+        <!-- SEDA RPVSP Card -->
+        <div class="cert-doc-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">⚡</div>
+              <span class="badge-tag">SEDA RPVSP</span>
+            </div>
+            <h4 class="card-title">SEDA Registered RPVSP</h4>
+            <p class="card-desc">Registered Solar PV Service Provider for NEM 3.0 (Rakyat, GOVER, NOVA) &amp; SELCO scheme engineering.</p>
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA RPVSP Certificate')">
+              <img src="Reference/Eternalgy_Cert_RPVSP.png" alt="SEDA RPVSP Cert" />
+              <div class="cert-overlay-tag">🔍 View SEDA RPVSP ↗</div>
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA RPVSP')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+            <a href="Reference/Eternalgy_Cert_RPVSP.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
+          </div>
+        </div>
+
+        <!-- MyHijau Card -->
+        <div class="cert-doc-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">🌱</div>
+              <span class="badge-tag">60% GITA TAX</span>
+            </div>
+            <h4 class="card-title">MyHijau Green Mark</h4>
+            <p class="card-desc">Certified green equipment recognition by MGTC enabling 60% GITA Tax Allowance for corporate clients.</p>
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Certificate')">
+              <img src="Reference/Eternalgy_Cert_MyHijau.png" alt="MyHijau Cert" />
+              <div class="cert-overlay-tag">🔍 View MyHijau Mark ↗</div>
+            </div>
+          </div>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Cert')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+            <a href="Reference/Eternalgy_Cert_MyHijau.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Copied to Clipboard!</div>
+
+  <!-- Lightbox Modal -->
+  <div id="overviewModal" class="overview-modal" aria-hidden="true">
+    <div class="overview-modal__backdrop" onclick="closeOverviewModal()"></div>
+    <div class="overview-modal__content">
+      <div class="overview-modal__header">
+        <h3 id="overviewModalTitle" style="font-family: var(--font-heading); color: #fff; font-size: 18px;">Certificate Document</h3>
+        <button type="button" class="overview-modal__close" onclick="closeOverviewModal()">&times;</button>
+      </div>
+      <div class="overview-modal__body">
+        <img id="overviewModalImg" src="" alt="Official Document" class="overview-modal__img" />
+      </div>
+      <div class="overview-modal__footer">
+        <span style="font-size: 13px; color: var(--text-muted);">Eternalgy Sdn Bhd · Compliance Vault Document</span>
+        <a id="overviewModalDownload" href="" download target="_blank" class="btn-cta btn-primary" style="padding: 6px 16px;">Download 📥</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copyToClipboard(text, label) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast((label || 'Text') + ' copied to clipboard!');
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function openOverviewModal(imageSrc, title) {
+      const modal = document.getElementById('overviewModal');
+      const img = document.getElementById('overviewModalImg');
+      const titleEl = document.getElementById('overviewModalTitle');
+      const downloadBtn = document.getElementById('overviewModalDownload');
+
+      if (!modal || !img) return;
+
+      img.src = imageSrc;
+      if (titleEl) titleEl.textContent = title || 'Official Document';
+      if (downloadBtn) downloadBtn.href = imageSrc;
+
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeOverviewModal() {
+      const modal = document.getElementById('overviewModal');
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+  </script>
+</body>
+</html>
