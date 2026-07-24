@@ -1,12 +1,13 @@
 {
   "last_updated": "2026-07-24T16:44:00Z",
   "metrics": {
-    "installed_kwp": 10861.78,
-    "installed_mwp": 10.86,
-    "installed_projects_count": 935,
+    "installed_kwp": 10750.99,
+    "installed_mwp": 10.75,
+    "installed_projects_count": 925,
     "seda_registrations_count": 11485,
     "total_clients_count": 7177,
-    "total_invoices_count": 8107
+    "total_invoices_count": 8107,
+    "last_verified": "2026-07-24"
   },
   "manager_questions": [
     {
