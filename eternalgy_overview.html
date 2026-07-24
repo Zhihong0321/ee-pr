@@ -1148,15 +1148,45 @@
 
 
     
+    
     function showToast(msg) {
       const toast = document.getElementById('toastNotification');
       if (toast) {
         toast.textContent = msg;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        setTimeout(() => toast.classList.remove('show'), 3500);
       } else {
         alert(msg);
       }
+    }
+
+    function handleOptionClick(btnEl) {
+      const qid = btnEl.getAttribute('data-qid');
+      const opt = btnEl.getAttribute('data-opt');
+      if (!qid || !opt) return;
+
+      btnEl.style.opacity = '0.5';
+      btnEl.innerText = '⏳ Saving Choice...';
+
+      fetch('/api/manager-response', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question_id: qid, selected_option: opt })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast('✅ Choice Recorded: ' + opt);
+          loadDashboardState();
+        } else {
+          alert('Error: ' + (data.error || 'Failed to save choice'));
+          loadDashboardState();
+        }
+      })
+      .catch(err => {
+        alert('Network Error: ' + err.message);
+        loadDashboardState();
+      });
     }
 
     async function loadDashboardState() {
@@ -1164,7 +1194,7 @@
         const response = await fetch('/api/dashboard-state');
         if (!response.ok) return;
         const state = await response.json();
-        
+
         // Render Manager Questions Console
         const consoleEl = document.getElementById('managerQAConsole');
         if (consoleEl && state.manager_questions) {
@@ -1176,13 +1206,14 @@
           } else {
             consoleEl.innerHTML = state.manager_questions.map(q => {
               const isResolved = q.status === 'RESOLVED';
-              const optionsHtml = (q.options || []).map((opt, idx) => {
+              const optionsHtml = (q.options || []).map(opt => {
                 const safeOpt = opt.replace(/"/g, '&quot;');
                 return `
                   <button type="button" 
-                          class="btn-cta ${isResolved && q.selected_option === opt ? 'btn-primary' : 'btn-outline'} manager-option-btn" 
+                          class="btn-cta ${isResolved && q.selected_option === opt ? 'btn-primary' : 'btn-outline'}" 
                           data-qid="${q.question_id}" 
-                          data-option="${safeOpt}"
+                          data-opt="${safeOpt}"
+                          onclick="handleOptionClick(this)"
                           style="padding: 8px 14px; font-size: 12.5px; margin-bottom: 6px;" ${isResolved ? 'disabled' : ''}>
                     ${opt} ${isResolved && q.selected_option === opt ? '✓' : ''}
                   </button>
@@ -1209,21 +1240,13 @@
                 </div>
               `;
             }).join('');
-
-            // Attach click event listeners safely
-            document.querySelectorAll('.manager-option-btn').forEach(btn => {
-              btn.addEventListener('click', function() {
-                const qid = this.getAttribute('data-qid');
-                const opt = this.getAttribute('data-option');
-                submitManagerChoice(qid, opt);
-              });
-            });
           }
         }
       } catch (err) {
         console.log('State load error:', err);
       }
     }
+
 
     async function submitManagerChoice(questionId, selectedOption) {
       showToast('Recording Manager Decision: ' + selectedOption);

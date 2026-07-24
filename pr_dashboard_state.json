@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-24T16:44:00Z",
+  "last_updated": "2026-07-24T17:15:00Z",
   "metrics": {
     "installed_kwp": 10750.99,
     "installed_mwp": 10.75,
@@ -11,6 +11,22 @@
   },
   "manager_questions": [
     {
+      "question_id": "Q-2121",
+      "email_id": 2121,
+      "timestamp": "2026-07-24T16:53:00Z",
+      "category": "AWARD_RECOGNITION",
+      "email_subject": "Malaysia Book of Records Achievement",
+      "ai_analysis": "Eternalgy's PR office has announced a new Malaysia Book of Records achievement. The communication highlights a notable record-setting milestone for the company, warranting official recognition and potential publicity.",
+      "question": "How would you like us to publicly communicate and leverage this Malaysia Book of Records achievement?",
+      "options": [
+        "\ud83d\udcf0 Issue a formal press release to media outlets",
+        "\ud83d\udcf2 Share across corporate social media with a celebratory post",
+        "\ud83d\udd12 Coordinate an internal announcement to employees first"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    },
+    {
       "question_id": "Q-2110",
       "email_id": "589112fd-439f-4213-9343-5192a759ec87",
       "timestamp": "2026-07-24T02:44:44Z",
@@ -19,7 +35,7 @@
       "ai_analysis": "SEDA/TNB Interconnection Approval received for 500kWp commercial solar installation in Johor.",
       "question": "New SEDA eATAP Interconnection Approval received for 500kWp Industrial Plant. How should we promote this milestone?",
       "options": [
-        "\ud83d\udcf0 Publish as Featured Commercial Case Study",
+        "\ud83d\udcd1 Publish as Featured Commercial Case Study",
         "\ud83d\udcc1 Save to Compliance Vault Only",
         "\u23f8\ufe0f Hold for Quarterly PR Digest"
       ],
