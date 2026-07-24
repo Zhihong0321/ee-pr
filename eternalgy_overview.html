@@ -761,80 +761,283 @@
       </div>
     </section>
 
-    <!-- Certifications Vault Section -->
+    <!-- Certifications & Document Vault Section -->
     <section id="certifications" class="section">
       <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
         <div>
           <span class="section-tag">Official Compliance Vault</span>
-          <h3 class="section-title">National Certifications &amp; Accreditations</h3>
+          <h3 class="section-title">National Certifications, Licenses &amp; Accreditations</h3>
         </div>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <a href="Eternalgy_Certifications_All.pdf" target="_blank" download class="btn-cta btn-primary">
             📥 Download All Certifications (PDF)
           </a>
+          <a href="Reference/Eternalgy Profile 2025.pdf" target="_blank" download class="btn-cta btn-outline">
+            📄 Company Profile 2025 (PDF)
+          </a>
         </div>
       </div>
 
-      <div class="grid-3">
-        <!-- CIDB Card -->
-        <div class="cert-doc-card">
+      <!-- Category Filter Tabs -->
+      <div class="vault-filter-container" style="display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap;">
+        <button class="filter-tab active" onclick="filterVault('all', this)">All Documents (9)</button>
+        <button class="filter-tab" onclick="filterVault('gov', this)">Government &amp; Licenses</button>
+        <button class="filter-tab" onclick="filterVault('partners', this)">Institutional Partners</button>
+        <button class="filter-tab" onclick="filterVault('awards', this)">Awards &amp; Accreditations</button>
+      </div>
+
+      <div class="grid-3" id="vaultGrid">
+
+        <!-- Card 1: CIDB Grade G7 Contractor -->
+        <div class="cert-doc-card vault-item" data-category="gov">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
               <div class="card-icon">📜</div>
-              <span class="badge-tag" style="background: var(--primary); color: #040906; font-weight: 800;">GRADE G7</span>
+              <span class="badge-tag" style="background: var(--primary); color: #040906; font-weight: 800;">GRADE G7 · UNLIMITED</span>
             </div>
-            <h4 class="card-title">CIDB Grade G7 License</h4>
-            <p class="card-desc">Unlimited contract tender capacity nationwide across Building (B04), Civil (CE21) &amp; Electrical (M15).</p>
-            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB Grade G7 License')">
-              <img src="Reference/Eternalgy_Cert_CIDB.png" alt="CIDB Cert" />
+            <h4 class="card-title">1. CIDB Grade G7 License</h4>
+            <p class="card-desc">
+              Officially certified by <strong>CIDB Malaysia</strong> at the highest Grade G7 level, authorizing unlimited contract tender capacity nationwide across Building (B04), Civil (CE21) &amp; Electrical (M15).
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Registration No:</strong> 0120250324-WP152634</li>
+              <li>• <strong>B04:</strong> Building Works &amp; Roofing Systems</li>
+              <li>• <strong>CE21:</strong> Civil &amp; Solar Mounting Structures</li>
+              <li>• <strong>M15:</strong> Electrical &amp; Grid Interconnection</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB Grade G7 Official License Document')">
+              <img src="Reference/Eternalgy_Cert_CIDB.png" alt="CIDB Grade G7 Official License" />
               <div class="cert-overlay-tag">🔍 Click to View License ↗</div>
             </div>
           </div>
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
-            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB License')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_CIDB.png', 'CIDB Grade G7 License')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
             <a href="Reference/Eternalgy_Cert_CIDB.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
           </div>
         </div>
 
-        <!-- SEDA RPVSP Card -->
-        <div class="cert-doc-card">
+        <!-- Card 2: SEDA Registered PV Service Provider -->
+        <div class="cert-doc-card vault-item" data-category="gov">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
               <div class="card-icon">⚡</div>
               <span class="badge-tag">SEDA RPVSP</span>
             </div>
-            <h4 class="card-title">SEDA Registered RPVSP</h4>
-            <p class="card-desc">Registered Solar PV Service Provider for NEM 3.0 (Rakyat, GOVER, NOVA) &amp; SELCO scheme engineering.</p>
-            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA RPVSP Certificate')">
-              <img src="Reference/Eternalgy_Cert_RPVSP.png" alt="SEDA RPVSP Cert" />
+            <h4 class="card-title">2. SEDA Registered RPVSP</h4>
+            <p class="card-desc">
+              Officially registered with <strong>SEDA Malaysia</strong> as a certified RPVSP for NEM 3.0 (Rakyat, GOVER, NOVA) &amp; SELCO scheme engineering.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Registration No:</strong> SEDA/RPVSP/2024/321</li>
+              <li>• <strong>Scope:</strong> Turnkey Solar Engineering &amp; Submissions</li>
+              <li>• <strong>Grid:</strong> TNB Bi-directional Interconnection</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA Registered RPVSP Certificate')">
+              <img src="Reference/Eternalgy_Cert_RPVSP.png" alt="SEDA RPVSP Certificate" />
               <div class="cert-overlay-tag">🔍 View SEDA RPVSP ↗</div>
             </div>
           </div>
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
-            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA RPVSP')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVSP.png', 'SEDA RPVSP Certificate')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
             <a href="Reference/Eternalgy_Cert_RPVSP.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
           </div>
         </div>
 
-        <!-- MyHijau Card -->
-        <div class="cert-doc-card">
+        <!-- Card 3: SEDA Registered PV Investor -->
+        <div class="cert-doc-card vault-item" data-category="gov">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">💰</div>
+              <span class="badge-tag">SEDA RPVI</span>
+            </div>
+            <h4 class="card-title">3. SEDA Approved PV Investor</h4>
+            <p class="card-desc">
+              Approved entry on the official national <strong>SEDA RPVI Directory</strong> to deliver Zero-CAPEX PPA &amp; Commercial Solar Leasing solutions.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Directory:</strong> Official SEDA RPVI Listing</li>
+              <li>• <strong>Model:</strong> PPA &amp; Commercial Solar Leasing</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVI.png', 'SEDA Registered RPVI License Document')">
+              <img src="Reference/Eternalgy_Cert_RPVI.png" alt="SEDA RPVI Certificate" />
+              <div class="cert-overlay-tag">🔍 View RPVI Directory ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_RPVI.png', 'SEDA RPVI Certificate')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+            <a href="Reference/Eternalgy_Cert_RPVI.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
+          </div>
+        </div>
+
+        <!-- Card 4: MyHijau Green Certified Equipment -->
+        <div class="cert-doc-card vault-item" data-category="gov">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
               <div class="card-icon">🌱</div>
-              <span class="badge-tag">60% GITA TAX</span>
+              <span class="badge-tag">60% GITA TAX ALLOWANCE</span>
             </div>
-            <h4 class="card-title">MyHijau Green Mark</h4>
-            <p class="card-desc">Certified green equipment recognition by MGTC enabling 60% GITA Tax Allowance for corporate clients.</p>
-            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Certificate')">
-              <img src="Reference/Eternalgy_Cert_MyHijau.png" alt="MyHijau Cert" />
+            <h4 class="card-title">4. MyHijau Certified Equipment</h4>
+            <p class="card-desc">
+              Certified under Malaysia's official green recognition scheme by <strong>MGTC</strong>, enabling <strong>60% GITA Tax Allowance</strong> for clients.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Cert No:</strong> MyHS00025/25</li>
+              <li>• <strong>Endorsement:</strong> SAJ Solar Inverter Range</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Green Technology Certificate')">
+              <img src="Reference/Eternalgy_Cert_MyHijau.png" alt="MyHijau Green Certificate" />
               <div class="cert-overlay-tag">🔍 View MyHijau Mark ↗</div>
             </div>
           </div>
-          <div style="margin-top: 16px; display: flex; gap: 8px;">
-            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Cert')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
+
+          <div style="margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <button type="button" onclick="openOverviewModal('Reference/Eternalgy_Cert_MyHijau.png', 'MyHijau Green Certificate')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View PNG ↗</button>
             <a href="Reference/Eternalgy_Cert_MyHijau.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 6px 12px; font-size: 12px;">PDF 📥</a>
           </div>
         </div>
+
+        <!-- Card 5: Maybank Selected Solar Partner -->
+        <div class="cert-doc-card vault-item" data-category="partners">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">🏦</div>
+              <span class="badge-tag" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4);">MAYBANK EXCLUSIVE</span>
+            </div>
+            <h4 class="card-title">5. Maybank Selected Partner</h4>
+            <p class="card-desc">
+              Appointed as preferred Solar PV Partner for all Maybank Solar Financing Products following rigorous quality and safety audit.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Status:</strong> Maybank Preferred Installer</li>
+              <li>• <strong>Standard:</strong> Audited Installation Safety</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/page14_cert.jpeg', 'Maybank Selected Solar Partner Certificate')">
+              <img src="Reference/page14_cert.jpeg" alt="Maybank Partner Certificate" />
+              <div class="cert-overlay-tag">🔍 View Maybank Letter ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="button" onclick="openOverviewModal('Reference/page14_cert.jpeg', 'Maybank Selected Solar Partner Letter')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View Document ↗</button>
+          </div>
+        </div>
+
+        <!-- Card 6: SAJ Malaysia Sole Distributor -->
+        <div class="cert-doc-card vault-item" data-category="partners">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">🤝</div>
+              <span class="badge-tag">SOLE DISTRIBUTOR</span>
+            </div>
+            <h4 class="card-title">6. SAJ Malaysia Sole Distributor</h4>
+            <p class="card-desc">
+              Exclusive sole distributor agreement signed in Shanghai for SAJ solar inverters &amp; energy storage systems across Malaysia (50MW+ / 10MWh).
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Territory:</strong> Malaysia Exclusive</li>
+              <li>• <strong>Capacity:</strong> 50MW PV + 10MWh BESS</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Logo/saj-logo.png', 'SAJ Malaysia Sole Distributor Agreement')" style="background: #fff; padding: 18px;">
+              <img src="Logo/saj-logo.png" alt="SAJ Inverter Logo" style="object-fit: contain;" />
+              <div class="cert-overlay-tag">🔍 View SAJ Agreement ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="button" onclick="openOverviewModal('Logo/saj-logo.png', 'SAJ Sole Distributor Agreement')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View Agreement ↗</button>
+          </div>
+        </div>
+
+        <!-- Card 7: SHRDC Center of Excellence Partner -->
+        <div class="cert-doc-card vault-item" data-category="partners">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">🎓</div>
+              <span class="badge-tag">SHRDC COE PARTNER</span>
+            </div>
+            <h4 class="card-title">7. SHRDC Center of Excellence</h4>
+            <p class="card-desc">
+              Partnered with Selangor Human Resource Development Centre establishing BESS battery training facilities in Shah Alam.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Partner:</strong> SHRDC Shah Alam</li>
+              <li>• <strong>Focus:</strong> BESS Battery Talent Training</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/page_15.png', 'SHRDC Center of Excellence Certificate')">
+              <img src="Reference/page_15.png" alt="SHRDC CoE Endorsement" />
+              <div class="cert-overlay-tag">🔍 View CoE Endorsement ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="button" onclick="openOverviewModal('Reference/page_15.png', 'SHRDC CoE Endorsement')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View Document ↗</button>
+          </div>
+        </div>
+
+        <!-- Card 8: Golden Bull Award Winner -->
+        <div class="cert-doc-card vault-item" data-category="awards">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">🏆</div>
+              <span class="badge-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);">GOLDEN BULL AWARD</span>
+            </div>
+            <h4 class="card-title">8. Golden Bull Award Winner</h4>
+            <p class="card-desc">
+              Awarded the prestigious Malaysia Golden Bull Award (Outstanding Bull Category) for rapid market growth, financial stability, and operational leadership.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Award:</strong> Golden Bull Outstanding Enterprise</li>
+              <li><strong>Category:</strong> Renewable Energy Growth</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/page_17.png', 'Malaysia Golden Bull Award Certificate')">
+              <img src="Reference/page_17.png" alt="Golden Bull Award Certificate" />
+              <div class="cert-overlay-tag">🔍 View Award Certificate ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="button" onclick="openOverviewModal('Reference/page_17.png', 'Golden Bull Award Certificate')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View Award ↗</button>
+          </div>
+        </div>
+
+        <!-- Card 9: MPiA Registered Industry Member -->
+        <div class="cert-doc-card vault-item" data-category="awards">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div class="card-icon">☀️</div>
+              <span class="badge-tag">MPIA MEMBER</span>
+            </div>
+            <h4 class="card-title">9. MPiA Industry Member</h4>
+            <p class="card-desc">
+              Registered corporate member of the <strong>Malaysian Photovoltaic Industry Association (MPiA)</strong>, actively driving renewable energy safety &amp; compliance.
+            </p>
+            <ul style="list-style: none; font-size: 13px; margin-bottom: 14px; color: var(--text-muted);">
+              <li>• <strong>Association:</strong> MPiA Corporate Member</li>
+              <li>• <strong>Standards:</strong> PV Safety &amp; Grid Compliance</li>
+            </ul>
+
+            <div class="cert-preview-box" onclick="openOverviewModal('Reference/page_13.png', 'MPiA Registered Member Status')">
+              <img src="Reference/page_13.png" alt="MPiA Member Certificate" />
+              <div class="cert-overlay-tag">🔍 View MPiA Document ↗</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="button" onclick="openOverviewModal('Reference/page_13.png', 'MPiA Member Status')" class="btn-cta btn-primary" style="padding: 6px 12px; font-size: 12px;">View Member Status ↗</button>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -862,6 +1065,26 @@
   </div>
 
   <script>
+
+    function filterVault(category, tabBtn) {
+      const tabs = document.querySelectorAll('.filter-tab');
+      tabs.forEach(tab => tab.style.background = 'rgba(255, 255, 255, 0.04)');
+      tabs.forEach(tab => tab.style.color = 'var(--text-muted)');
+      if (tabBtn) {
+        tabBtn.style.background = 'var(--primary)';
+        tabBtn.style.color = '#040906';
+      }
+
+      const items = document.querySelectorAll('.vault-item');
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
     function copyToClipboard(text, label) {
       navigator.clipboard.writeText(text).then(() => {
         showToast((label || 'Text') + ' copied to clipboard!');
