@@ -679,36 +679,160 @@
     <section id="media-kit" class="section">
       <div class="section-header">
         <span class="section-tag">Phase 2 · Designer Media Kit</span>
-        <h3 class="section-title">Official Brand Logos &amp; Vector Assets</h3>
+        <h3 class="section-title">Official Brand Logos &amp; Vector Assets (18 Variants)</h3>
       </div>
 
-      <div class="grid-4">
-        <!-- Logo 1: Eternalgy -->
-        <div class="asset-item-card">
-          <div class="asset-img-box"><img src="Logo/eternalgy.png" alt="Eternalgy Primary Logo" /></div>
-          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">Eternalgy Corporate Logo</h5>
-          <a href="Logo/eternalgy.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+      <!-- Logo Category Filter Tabs -->
+      <div class="logo-filter-container" style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+        <button class="logo-filter-tab active" onclick="filterLogos('all', this)" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: var(--primary); color: #040906; cursor: pointer; transition: all 0.2s ease;">All Assets (18)</button>
+        <button class="logo-filter-tab" onclick="filterLogos('en', this)" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;">English Corporate Logos (6)</button>
+        <button class="logo-filter-tab" onclick="filterLogos('cn', this)" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;">Chinese Logos (中文标识) (6)</button>
+        <button class="logo-filter-tab" onclick="filterLogos('partner', this)" style="padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;">Partners &amp; Accreditations (6)</button>
+      </div>
+
+      <div class="grid-3" id="logoGrid">
+        <!-- EN 1: Horizontal Dark -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo-08.png" alt="Eternalgy Horizontal Primary Logo Dark" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Horizontal (Dark Text)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Primary logo for light backgrounds</p>
+          <a href="Logo/logo-08.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
         </div>
 
-        <!-- Logo 2: JinkoSolar SVG -->
-        <div class="asset-item-card">
-          <div class="asset-img-box"><img src="Logo/Jinko_Solar_logo.svg" alt="JinkoSolar Logo" /></div>
-          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">JinkoSolar Official Vector</h5>
+        <!-- EN 2: Horizontal White -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo-02.png" alt="Eternalgy Horizontal Logo White" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Horizontal (White Text)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Inverse logo for dark backgrounds</p>
+          <a href="Logo/logo-02.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- EN 3: Vertical Stacked Dark -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo-07.png" alt="Eternalgy Vertical Stacked Logo Dark" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Vertical (Dark Text)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Centered badge for formal documents</p>
+          <a href="Logo/logo-07.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- EN 4: Vertical Stacked White -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo-01.png" alt="Eternalgy Vertical Stacked Logo White" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Vertical (White Text)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Centered badge for dark slides</p>
+          <a href="Logo/logo-01.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- EN 5: Symbol Dark -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo-09.png" alt="Eternalgy Symbol Mark Dark" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Infinity Mark (Dark)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Standalone EE Icon Mark</p>
+          <a href="Logo/logo-09.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- EN 6: Symbol White -->
+        <div class="asset-item-card logo-item" data-category="en">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo-03.png" alt="Eternalgy Symbol Mark White" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Eternalgy Infinity Mark (White)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Standalone EE Icon Mark for dark BG</p>
+          <a href="Logo/logo-03.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 1: Horizontal Dark -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo_CN-08.png" alt="恒能 恒久能源 横向标识 深色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 恒久能源 横向标识 (深色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文官方横向品牌标识 (浅色背景)</p>
+          <a href="Logo/logo_CN-08.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 2: Horizontal White -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo_CN-02.png" alt="恒能 恒久能源 横向标识 白色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 恒久能源 横向标识 (白色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文官方横向品牌标识 (深色背景)</p>
+          <a href="Logo/logo_CN-02.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 3: Vertical Dark -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo_CN-07.png" alt="恒能 恒久能源 纵向组合 深色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 恒久能源 纵向组合 (深色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文官方纵向徽章标识 (浅色背景)</p>
+          <a href="Logo/logo_CN-07.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 4: Vertical White -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo_CN-01.png" alt="恒能 恒久能源 纵向组合 白色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 恒久能源 纵向组合 (白色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文官方纵向徽章标识 (深色背景)</p>
+          <a href="Logo/logo_CN-01.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 5: Chinese Symbol Dark -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/logo_CN-09.png" alt="恒能 标志图样 深色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 标志图样 (深色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文独立品牌图样</p>
+          <a href="Logo/logo_CN-09.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- CN 6: Chinese Symbol White -->
+        <div class="asset-item-card logo-item" data-category="cn">
+          <div class="asset-img-box" style="background: #09130e; border: 1px solid rgba(52,211,153,0.3);"><img src="Logo/logo_CN-03.png" alt="恒能 标志图样 白色" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">恒能 标志图样 (白色)</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">中文独立品牌图样 (深色背景)</p>
+          <a href="Logo/logo_CN-03.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Partner 1: JinkoSolar -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/Jinko_Solar_logo.svg" alt="JinkoSolar Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">JinkoSolar Official Vector</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Global Solar Panel Technology Partner</p>
           <a href="Logo/Jinko_Solar_logo.svg" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download SVG 📥</a>
         </div>
 
-        <!-- Logo 3: SAJ Inverter -->
-        <div class="asset-item-card">
-          <div class="asset-img-box"><img src="Logo/saj-logo.png" alt="SAJ Inverter Logo" /></div>
-          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">SAJ Sole Distributor Mark</h5>
+        <!-- Partner 2: SAJ Inverter -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/saj-logo.png" alt="SAJ Inverter Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">SAJ Sole Distributor Mark</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Exclusive Inverter &amp; Storage Partner</p>
           <a href="Logo/saj-logo.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
         </div>
 
-        <!-- Logo 4: Golden Bull -->
-        <div class="asset-item-card">
-          <div class="asset-img-box"><img src="Logo/goldenbull.png" alt="Golden Bull Award Logo" /></div>
-          <h5 style="font-size: 14px; color: #fff; margin-bottom: 10px;">Golden Bull Award Mark</h5>
+        <!-- Partner 3: Golden Bull -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/goldenbull.png" alt="Golden Bull Award Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">Golden Bull Award Mark</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Outstanding Business Award 2024</p>
           <a href="Logo/goldenbull.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Partner 4: CIDB -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/cidb-registered.png" alt="CIDB Registered Contractor Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">CIDB Grade G7 Seal</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Official Construction Board Seal</p>
+          <a href="Logo/cidb-registered.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Partner 5: SEDA -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/Seda-Malaysia001.png" alt="SEDA Malaysia Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">SEDA Malaysia Mark</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">Sustainable Energy Authority Seal</p>
+          <a href="Logo/Seda-Malaysia001.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
+        </div>
+
+        <!-- Partner 6: MyHijau -->
+        <div class="asset-item-card logo-item" data-category="partner">
+          <div class="asset-img-box" style="background: #ffffff;"><img src="Logo/myhijau_plain.png" alt="MyHijau Green Mark Logo" /></div>
+          <h5 style="font-size: 14px; color: #fff; margin-bottom: 4px;">MyHijau Green Mark</h5>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">60% GITA Tax Allowance Seal</p>
+          <a href="Logo/myhijau_plain.png" download class="btn-cta btn-primary" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px;">Download PNG 📥</a>
         </div>
       </div>
 
@@ -1077,6 +1201,27 @@
       }
 
       const items = document.querySelectorAll('.vault-item');
+      items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function filterLogos(category, tabBtn) {
+      const tabs = document.querySelectorAll('.logo-filter-tab');
+      tabs.forEach(tab => {
+        tab.style.background = 'rgba(255, 255, 255, 0.04)';
+        tab.style.color = 'var(--text-muted)';
+      });
+      if (tabBtn) {
+        tabBtn.style.background = 'var(--primary)';
+        tabBtn.style.color = '#040906';
+      }
+
+      const items = document.querySelectorAll('.logo-item');
       items.forEach(item => {
         if (category === 'all' || item.getAttribute('data-category') === category) {
           item.style.display = 'flex';
