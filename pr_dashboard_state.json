@@ -1,0 +1,49 @@
+{
+  "last_updated": "2026-07-24T16:44:00Z",
+  "metrics": {
+    "installed_kwp": 10861.78,
+    "installed_mwp": 10.86,
+    "installed_projects_count": 935,
+    "seda_registrations_count": 11485,
+    "total_clients_count": 7177,
+    "total_invoices_count": 8107
+  },
+  "manager_questions": [
+    {
+      "question_id": "Q-2110",
+      "email_id": "589112fd-439f-4213-9343-5192a759ec87",
+      "timestamp": "2026-07-24T02:44:44Z",
+      "category": "CERTIFICATE_UPDATE",
+      "email_subject": "ATP202617521: Approval for eATAP Application",
+      "ai_analysis": "SEDA/TNB Interconnection Approval received for 500kWp commercial solar installation in Johor.",
+      "question": "New SEDA eATAP Interconnection Approval received for 500kWp Industrial Plant. How should we promote this milestone?",
+      "options": [
+        "\ud83d\udcf0 Publish as Featured Commercial Case Study",
+        "\ud83d\udcc1 Save to Compliance Vault Only",
+        "\u23f8\ufe0f Hold for Quarterly PR Digest"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    }
+  ],
+  "published_updates": [
+    {
+      "id": "PUB-101",
+      "category": "CERTIFICATE_UPDATE",
+      "title": "CIDB Grade G7 Unlimited Contractor License Renewed",
+      "date": "2026-07-24",
+      "summary": "Official CIDB Grade G7 accreditation re-certified across Building (B04), Civil (CE21) and Electrical (M15) categories.",
+      "badge": "CIDB G7",
+      "media_url": "Reference/Eternalgy_Cert_CIDB.png"
+    },
+    {
+      "id": "PUB-102",
+      "category": "AWARD_RECOGNITION",
+      "title": "Malaysia Golden Bull Outstanding Enterprise Award Winner",
+      "date": "2026-07-23",
+      "summary": "Eternalgy recognized at the Malaysia Golden Bull Awards for excellence in renewable energy deployment and client trust.",
+      "badge": "GOLDEN BULL",
+      "media_url": "Reference/page_17.png"
+    }
+  ]
+}

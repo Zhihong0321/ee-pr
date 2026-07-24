@@ -1145,6 +1145,80 @@
       }
     }
 
+
+    async function loadDashboardState() {
+      try {
+        const response = await fetch('/api/dashboard-state');
+        if (!response.ok) return;
+        const state = await response.json();
+        
+        // Render Manager Questions Console
+        const consoleEl = document.getElementById('managerQAConsole');
+        if (consoleEl && state.manager_questions) {
+          if (state.manager_questions.length === 0) {
+            consoleEl.innerHTML = `
+              <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 30px;">
+                <p style="color: var(--text-muted); font-size: 14px;">✅ No pending questions from PR AI. All received emails processed &amp; resolved.</p>
+              </div>`;
+          } else {
+            consoleEl.innerHTML = state.manager_questions.map(q => {
+              const isResolved = q.status === 'RESOLVED';
+              const optionsHtml = (q.options || []).map(opt => `
+                <button onclick="submitManagerChoice('${q.question_id}', '${opt.replace(/'/g, "\'")}')" 
+                        class="btn-cta ${isResolved && q.selected_option === opt ? 'btn-primary' : 'btn-outline'}" 
+                        style="padding: 8px 14px; font-size: 12.5px;" ${isResolved ? 'disabled' : ''}>
+                  ${opt} ${isResolved && q.selected_option === opt ? '✓' : ''}
+                </button>
+              `).join('');
+
+              return `
+                <div class="card" style="border: 1px solid ${isResolved ? '#10b981' : 'rgba(245, 158, 11, 0.4)'}; background: ${isResolved ? 'rgba(16, 185, 129, 0.08)' : 'linear-gradient(180deg, var(--bg-card) 0%, rgba(245, 158, 11, 0.06) 100%)'};">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                      <span class="badge-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">${q.category || 'AI QUESTION'}</span>
+                      <span style="font-size: 12px; color: ${isResolved ? '#34d399' : '#fbbf24'}; font-weight: 700;">
+                        ${isResolved ? '✅ Decision Recorded' : '⏳ Awaiting Manager Decision'}
+                      </span>
+                    </div>
+                    <h4 style="font-family: var(--font-heading); font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 6px;">${q.question}</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+                      <strong>AI Context:</strong> ${q.ai_analysis}
+                    </p>
+                  </div>
+                  <div style="margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    ${optionsHtml}
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
+      } catch (err) {
+        console.log('State load error:', err);
+      }
+    }
+
+    async function submitManagerChoice(questionId, selectedOption) {
+      showToast('Recording Manager Decision: ' + selectedOption);
+      try {
+        const response = await fetch('/api/manager-response', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question_id: questionId, selected_option: selectedOption })
+        });
+        const result = await response.json();
+        if (result.success) {
+          showToast('✅ Manager Choice Applied! Frontpage updated.');
+          await loadDashboardState();
+        }
+      } catch (err) {
+        showToast('Error saving choice: ' + err.message);
+      }
+    }
+
+    // Call on load
+    document.addEventListener('DOMContentLoaded', loadDashboardState);
+
     function scanIncomingEmails() {
       showToast('Scanning EE-Mail Server (pr@eternalgy.me)...');
     }

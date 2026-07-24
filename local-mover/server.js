@@ -179,6 +179,60 @@ app.get('/api/connections', async (req, res) => {
   res.json(results);
 });
 
+// 1b. R2 Storage Usage Breakdown Endpoint
+app.get('/api/r2-storage', async (req, res) => {
+  try {
+    const env = getEnv();
+    const s3 = getS3Client();
+    const { ListObjectsV2Command } = require('@aws-sdk/client-s3');
+    let isTruncated = true;
+    let continuationToken;
+    let totalObjects = 0;
+    let totalBytes = 0;
+    const prefixStats = {};
+
+    while (isTruncated) {
+      const response = await s3.send(new ListObjectsV2Command({
+        Bucket: env.r2Bucket,
+        ContinuationToken: continuationToken
+      }));
+
+      (response.Contents || []).forEach(obj => {
+        totalObjects++;
+        totalBytes += obj.Size;
+        const prefix = obj.Key.split('/')[0] || '(root)';
+        if (!prefixStats[prefix]) prefixStats[prefix] = { count: 0, bytes: 0 };
+        prefixStats[prefix].count++;
+        prefixStats[prefix].bytes += obj.Size;
+      });
+
+      isTruncated = response.IsTruncated;
+      continuationToken = response.NextContinuationToken;
+    }
+
+    const breakdown = Object.keys(prefixStats).map(p => ({
+      prefix: p,
+      count: prefixStats[p].count,
+      bytes: prefixStats[p].bytes,
+      size_mb: (prefixStats[p].bytes / (1024 * 1024)).toFixed(2),
+      size_gb: (prefixStats[p].bytes / (1024 * 1024 * 1024)).toFixed(2),
+      percent: totalBytes > 0 ? ((prefixStats[p].bytes / totalBytes) * 100).toFixed(1) : '0'
+    })).sort((a, b) => b.bytes - a.bytes);
+
+    res.json({
+      success: true,
+      bucket: env.r2Bucket,
+      total_objects: totalObjects,
+      total_bytes: totalBytes,
+      total_mb: (totalBytes / (1024 * 1024)).toFixed(2),
+      total_gb: (totalBytes / (1024 * 1024 * 1024)).toFixed(3),
+      breakdown: breakdown
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 2. Discovery Candidates Endpoint
 app.get('/api/discovery', async (req, res) => {
   const ageDays = parseInt(req.query.age_days || '60', 10);
