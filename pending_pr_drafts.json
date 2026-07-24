@@ -1,5 +1,16 @@
 [
   {
+    "draft_id": "DRAFT-589112fd-439f-4213-9343-5192a759ec87",
+    "email_id": "589112fd-439f-4213-9343-5192a759ec87",
+    "category": "CERTIFICATE_UPDATE",
+    "headline": "ATP202617521: Approval for eATAP Application",
+    "sender": "noreply@seda.gov.my",
+    "received_at": "2026-07-24T07:35:23.102711Z",
+    "summary": "Received via pr@eternalgy.me webhook. Formatted into PR update card.",
+    "status": "PENDING_MANAGER_APPROVAL",
+    "marked_as_read": true
+  },
+  {
     "draft_id": "DRAFT-2114",
     "email_id": 2114,
     "category": "PRESS_RELEASE",
