@@ -7,7 +7,12 @@
     "seda_registrations_count": 11485,
     "total_clients_count": 7177,
     "total_invoices_count": 8107,
-    "last_verified": "2026-07-24"
+    "last_verified": "2026-07-24",
+    "paid_clients_invoices_count": 1034,
+    "total_revenue_rm": 28149508.59,
+    "total_revenue_millions": 28.15,
+    "total_invoice_contracting_value_rm": 29278036.04,
+    "total_gross_payments_collected_rm": 28971995.94
   },
   "manager_questions": [
     {
