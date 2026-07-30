@@ -7,6 +7,8 @@ import os
 import mimetypes
 import io
 import base64
+import hashlib
+import uuid
 from datetime import datetime, timezone, timedelta
 from PIL import Image, ImageOps
 import boto3
@@ -28,6 +30,90 @@ MEDIAKIT_DIR = os.path.dirname(os.path.abspath(__file__))
 EE_MAIL_BASE = "https://ee-mail-production.up.railway.app"
 STATE_FILE = os.path.join(MEDIAKIT_DIR, "pr_dashboard_state.json")
 DRAFTS_FILE = os.path.join(MEDIAKIT_DIR, "pending_pr_drafts.json")
+
+# Shared activity-log service. The token is intentionally supplied only at runtime.
+ACTIVITY_LOG_PROXY_URL = os.environ.get(
+    "ACTIVITY_LOG_PROXY_URL", "https://pg-proxy-production.up.railway.app/api/sql"
+)
+ACTIVITY_LOG_DB_NAME = os.environ.get("ACTIVITY_LOG_DB_NAME", "prod_main")
+ACTIVITY_LOG_API_TOKEN = os.environ.get("ACTIVITY_LOG_API_TOKEN")
+ACTIVITY_LOG_APP = os.environ.get("ACTIVITY_LOG_APP", "eternalgy-pr-media-kit")
+ACTIVITY_LOG_ENV = os.environ.get("ACTIVITY_LOG_ENV", os.environ.get("RAILWAY_ENVIRONMENT", "production"))
+
+
+def get_request_context(handler):
+    """Return privacy-conscious, request-scoped data for a detailed audit row."""
+    forwarded_for = handler.headers.get("X-Forwarded-For", "")
+    client_ip = forwarded_for.split(",")[0].strip() if forwarded_for else handler.client_address[0]
+    user_agent = handler.headers.get("User-Agent", "")[:1000]
+    fingerprint = hashlib.sha256(f"{client_ip}|{user_agent}".encode("utf-8")).hexdigest()[:16]
+    forwarded_host = handler.headers.get("X-Forwarded-Host") or handler.headers.get("Host", "")
+    forwarded_proto = handler.headers.get("X-Forwarded-Proto", "https")
+    path = urllib.parse.urlsplit(handler.path).path
+    source_url = f"{forwarded_proto}://{forwarded_host}{path}" if forwarded_host else path
+    return {
+        "request_id": handler.headers.get("X-Request-ID") or str(uuid.uuid4()),
+        "ip": client_ip,
+        "user_agent": user_agent,
+        "actor_ref": f"visitor:{fingerprint}",
+        "source_url": source_url,
+        "path": path,
+        "referer": handler.headers.get("Referer", "")[:2000],
+    }
+
+
+def log_activity(action, *, entity_type=None, entity_id=None, entity_label=None,
+                 description=None, status="success", context=None, actor_kind="system",
+                 actor_role=None, metadata=None):
+    """Best-effort shared audit logging; never makes the primary request fail."""
+    if not ACTIVITY_LOG_API_TOKEN:
+        return
+
+    context = context or {}
+    metadata = metadata or {}
+    sql = """
+        INSERT INTO public.activity_log (
+            app, app_env, source_url, actor_kind, actor_ref, actor_role,
+            action, entity_type, entity_id, entity_label, description, status,
+            request_id, ip, user_agent, metadata
+        ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+            $13, $14, $15, $16::jsonb
+        )
+    """
+    params = [
+        ACTIVITY_LOG_APP, ACTIVITY_LOG_ENV, context.get("source_url"), actor_kind,
+        context.get("actor_ref"), actor_role, action, entity_type, str(entity_id) if entity_id else None,
+        entity_label, description, status, context.get("request_id"), context.get("ip"),
+        context.get("user_agent"), json.dumps(metadata, default=str),
+    ]
+    payload = json.dumps({"db_name": ACTIVITY_LOG_DB_NAME, "sql": sql, "params": params}).encode("utf-8")
+    request = urllib.request.Request(
+        ACTIVITY_LOG_PROXY_URL,
+        data=payload,
+        headers={"Authorization": f"Bearer {ACTIVITY_LOG_API_TOKEN}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=2) as response:
+            if response.status >= 300:
+                raise RuntimeError(f"activity log service returned HTTP {response.status}")
+    except Exception as exc:
+        print(f"Activity log write skipped: {exc}")
+
+
+def log_page_visit(handler, page_name):
+    context = get_request_context(handler)
+    log_activity(
+        "visit",
+        entity_type="page",
+        entity_id=context["path"],
+        entity_label=page_name,
+        description=f"Visitor opened {page_name}",
+        context=context,
+        actor_kind="visitor",
+        metadata={"http_method": "GET", "referer": context["referer"]},
+    )
 
 # MiniMax-M3 LLM Configuration (from Hermes Vault)
 MINIMAX_API_KEY = os.environ.get("MINIMAX_API_KEY", "sk-cp-Mn15gRFLBQz1Rb5roxtNLoet9MDnGLTiET3I2YmebEWr4WOvgQLOei3D48o2HIrm36pcF8aA1shygKt1WMWrNy-ca5Cr1cij4MxOOTHZkRBmfPLKBpXBMuo")
@@ -322,6 +408,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         if self.path == "/" or self.path == "/index.html":
             html_path = os.path.join(MEDIAKIT_DIR, "eternalgy_overview.html")
             if os.path.exists(html_path):
+                log_page_visit(self, "Eternalgy PR & Media Center")
                 with open(html_path, "r", encoding="utf-8") as f:
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
@@ -330,6 +417,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         if self.path in ["/queue", "/approval-queue", "/queue.html", "/manager"]:
             queue_path = os.path.join(MEDIAKIT_DIR, "queue.html")
             if os.path.exists(queue_path):
+                log_page_visit(self, "Manager AI Approval Queue")
                 with open(queue_path, "r", encoding="utf-8") as f:
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
@@ -338,6 +426,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         if self.path in ["/gallery", "/photos", "/media-library", "/gallery.html"]:
             gallery_path = os.path.join(MEDIAKIT_DIR, "media_gallery.html")
             if os.path.exists(gallery_path):
+                log_page_visit(self, "Media Gallery")
                 with open(gallery_path, "r", encoding="utf-8") as f:
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
@@ -346,6 +435,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         if self.path in ["/docs", "/webhook-docs", "/docs.html"]:
             docs_path = os.path.join(MEDIAKIT_DIR, "webhook_docs.html")
             if os.path.exists(docs_path):
+                log_page_visit(self, "Webhook Documentation")
                 with open(docs_path, "r", encoding="utf-8") as f:
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
@@ -483,6 +573,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             return
 
         if self.path == "/webhook/email-received" or self.path == "/api/v1/pr-email-webhook":
+            context = get_request_context(self)
             content_length = int(self.headers.get("Content-Length", 0))
             body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
             try:
@@ -493,10 +584,36 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             email_id = payload.get("email_id") or payload.get("id") or payload.get("email", {}).get("email_id")
 
             if not email_id:
+                log_activity(
+                    "request_received", entity_type="pr_request", description="Inbound PR request rejected: missing email_id",
+                    status="failed", context=context, actor_kind="system",
+                    metadata={"endpoint": context["path"], "content_length": content_length},
+                )
                 self._send_response(400, {"error": "Missing email_id in webhook payload"})
                 return
 
-            result = process_incoming_email(email_id, payload)
+            try:
+                result = process_incoming_email(email_id, payload)
+            except Exception as exc:
+                log_activity(
+                    "request_received", entity_type="pr_request", entity_id=email_id,
+                    entity_label=f"PR request {email_id}", description="Inbound PR request processing failed",
+                    status="failed", context=context, actor_kind="system",
+                    metadata={"endpoint": context["path"], "content_length": content_length, "error_type": type(exc).__name__},
+                )
+                self._send_response(500, {"error": "Unable to process inbound PR request"})
+                return
+
+            log_activity(
+                "request_received", entity_type="pr_request", entity_id=email_id,
+                entity_label=f"PR request {email_id}", description="Inbound PR request analyzed and queued",
+                context=context, actor_kind="system",
+                metadata={
+                    "endpoint": context["path"], "content_length": content_length,
+                    "category": result.get("llm_result", {}).get("category"),
+                    "manager_question_generated": result.get("manager_question_generated", False),
+                },
+            )
             self._send_response(200, {
                 "success": True,
                 "message": "Email analyzed by MiniMax-M3 LLM, executable tasks & questions generated, marked as read on EE-Mail server.",
@@ -510,6 +627,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             return
 
         if self.path == "/api/manager-response":
+            context = get_request_context(self)
             content_length = int(self.headers.get("Content-Length", 0))
             body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
             try:
@@ -520,11 +638,23 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             q_id = payload.get("question_id")
             chosen_opt = payload.get("selected_option")
 
+            if not q_id or not chosen_opt:
+                log_activity(
+                    "approve", entity_type="manager_question", entity_id=q_id,
+                    description="Manager approval rejected: missing question ID or selected option",
+                    status="failed", context=context, actor_kind="manager", actor_role="manager",
+                    metadata={"endpoint": context["path"], "content_length": content_length},
+                )
+                self._send_response(400, {"success": False, "error": "question_id and selected_option are required"})
+                return
+
             state = load_state()
+            resolved_question = None
             for q in state.get("manager_questions", []):
                 if q.get("question_id") == q_id:
                     q["status"] = "RESOLVED"
                     q["selected_option"] = chosen_opt
+                    resolved_question = q
 
                     state.setdefault("published_updates", []).insert(0, {
                         "id": f"PUB-{q_id}",
@@ -536,7 +666,26 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     })
                     break
 
+            if not resolved_question:
+                log_activity(
+                    "approve", entity_type="manager_question", entity_id=q_id,
+                    description="Manager approval rejected: request was not found",
+                    status="failed", context=context, actor_kind="manager", actor_role="manager",
+                    metadata={"endpoint": context["path"], "selected_option": chosen_opt},
+                )
+                self._send_response(404, {"success": False, "error": "Manager question not found"})
+                return
+
             save_state(state)
+            log_activity(
+                "approve", entity_type="manager_question", entity_id=q_id,
+                entity_label=f"Manager question {q_id}", description="Manager approved a queued PR request",
+                context=context, actor_kind="manager", actor_role="manager",
+                metadata={
+                    "endpoint": context["path"], "selected_option": chosen_opt,
+                    "category": resolved_question.get("category"), "email_id": resolved_question.get("email_id"),
+                },
+            )
             self._send_response(200, {"success": True, "message": f"Recorded manager choice: '{chosen_opt}'"})
             return
 
