@@ -710,6 +710,13 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 self._send_response(400, {"error": f"Invalid JSON payload: {e}"})
                 return
 
+            # Payload must be a JSON object to call .get() on it below. Valid JSON that
+            # isn't an object (e.g. a bare array/string) is coerced to {} so it falls
+            # through to the existing "missing email_id" 400 path instead of crashing
+            # the request with an unguarded AttributeError.
+            if not isinstance(payload, dict):
+                payload = {}
+
             email_id = payload.get("email_id") or payload.get("id") or (payload.get("email") or {}).get("email_id")
 
             if not email_id:
