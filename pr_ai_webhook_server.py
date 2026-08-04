@@ -30,6 +30,8 @@ MEDIAKIT_DIR = os.path.dirname(os.path.abspath(__file__))
 EE_MAIL_BASE = "https://ee-mail-production.up.railway.app"
 STATE_FILE = os.path.join(MEDIAKIT_DIR, "pr_dashboard_state.json")
 DRAFTS_FILE = os.path.join(MEDIAKIT_DIR, "pending_pr_drafts.json")
+DEBUG_LOG_FILE = os.path.join(MEDIAKIT_DIR, "pr_debug_log.json")
+DEBUG_LOG_MAX_ENTRIES = 300
 
 # Shared activity-log service. The token is intentionally supplied only at runtime.
 ACTIVITY_LOG_PROXY_URL = os.environ.get(
@@ -252,6 +254,86 @@ def save_state(state):
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
+def append_debug_log(entry):
+    """Best-effort inbound-request trail so real traffic can be inspected after the fact.
+    Never raises — a failure here must not break the actual request being served."""
+    try:
+        entry = dict(entry)
+        entry["ts"] = get_kl_time_str()
+        entries = []
+        if os.path.exists(DEBUG_LOG_FILE):
+            try:
+                with open(DEBUG_LOG_FILE, "r", encoding="utf-8") as f:
+                    entries = json.load(f)
+                if not isinstance(entries, list):
+                    entries = []
+            except Exception:
+                entries = []
+        entries.insert(0, entry)
+        entries = entries[:DEBUG_LOG_MAX_ENTRIES]
+        with open(DEBUG_LOG_FILE, "w", encoding="utf-8") as f:
+            json.dump(entries, f, indent=2)
+    except Exception as e:
+        print(f"Debug log write failed: {e}")
+
+
+def load_debug_log(limit=100):
+    if not os.path.exists(DEBUG_LOG_FILE):
+        return []
+    try:
+        with open(DEBUG_LOG_FILE, "r", encoding="utf-8") as f:
+            entries = json.load(f)
+        if not isinstance(entries, list):
+            return []
+        return entries[:limit]
+    except Exception:
+        return []
+
+
+def read_request_body(handler):
+    """Robustly read the raw body, including chunked Transfer-Encoding (no Content-Length),
+    which http.server does NOT handle automatically. A sender using chunked encoding
+    would otherwise silently produce an empty body under the old fixed-Content-Length read."""
+    te = handler.headers.get("Transfer-Encoding", "").lower()
+    if "chunked" in te:
+        chunks = []
+        try:
+            while True:
+                size_line = handler.rfile.readline().strip()
+                if not size_line:
+                    break
+                size = int(size_line.split(b";")[0], 16)
+                if size == 0:
+                    handler.rfile.readline()
+                    break
+                chunks.append(handler.rfile.read(size))
+                handler.rfile.read(2)  # trailing CRLF
+        except Exception as e:
+            print(f"Chunked body read error: {e}")
+        return b"".join(chunks)
+
+    content_length = int(handler.headers.get("Content-Length", 0) or 0)
+    return handler.rfile.read(content_length) if content_length > 0 else b""
+
+
+def log_inbound_request(handler, body_bytes, matched_route, outcome, detail=None):
+    context = get_request_context(handler)
+    append_debug_log({
+        "method": handler.command,
+        "path": handler.path,
+        "matched_route": matched_route,
+        "outcome": outcome,
+        "ip": context["ip"],
+        "user_agent": context["user_agent"],
+        "content_length_header": handler.headers.get("Content-Length"),
+        "transfer_encoding_header": handler.headers.get("Transfer-Encoding"),
+        "content_type_header": handler.headers.get("Content-Type"),
+        "body_bytes_read": len(body_bytes) if body_bytes else 0,
+        "body_preview": (body_bytes[:3000].decode("utf-8", errors="replace") if body_bytes else ""),
+        "detail": detail or {},
+    })
+
+
 def refresh_metrics_state():
     state = load_state()
     now_str = get_kl_time_str()
@@ -448,6 +530,46 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, state)
             return
 
+        if self.path.startswith("/api/debug-log"):
+            parsed = urllib.parse.urlsplit(self.path)
+            qs = urllib.parse.parse_qs(parsed.query)
+            limit = 100
+            if "limit" in qs:
+                try:
+                    limit = int(qs["limit"][0])
+                except ValueError:
+                    pass
+            entries = load_debug_log(limit)
+            self._send_response(200, {"count": len(entries), "entries": entries})
+            return
+
+        if self.path.startswith("/debug"):
+            entries = load_debug_log(100)
+            rows = ""
+            for e in entries:
+                rows += f"""<tr>
+                    <td>{e.get('ts','')}</td>
+                    <td>{e.get('method','')}</td>
+                    <td>{e.get('path','')}</td>
+                    <td>{e.get('matched_route','')}</td>
+                    <td style="color:{'#2ecc71' if 'queued' in str(e.get('outcome')) or 'ok' in str(e.get('outcome')) else '#e74c3c'}">{e.get('outcome','')}</td>
+                    <td>{e.get('ip','')}</td>
+                    <td>CL={e.get('content_length_header')} TE={e.get('transfer_encoding_header')} bytes_read={e.get('body_bytes_read')}</td>
+                    <td><pre style="white-space:pre-wrap;max-width:400px;">{json.dumps(e.get('detail', {}), default=str)}</pre></td>
+                    <td><pre style="white-space:pre-wrap;max-width:400px;">{(e.get('body_preview') or '')[:800]}</pre></td>
+                </tr>"""
+            html = f"""<!DOCTYPE html><html><head><title>PR Webhook Debug Log</title>
+            <meta http-equiv="refresh" content="15">
+            <style>body{{font-family:monospace;background:#111;color:#eee;padding:16px;}}
+            table{{border-collapse:collapse;width:100%;}} td,th{{border:1px solid #444;padding:6px;font-size:12px;vertical-align:top;}}
+            th{{background:#222;}}</style></head><body>
+            <h2>Inbound Request Debug Log ({len(entries)} entries, newest first, auto-refreshes 15s)</h2>
+            <p>Raw JSON: <a style="color:#5bc0de" href="/api/debug-log?limit=100">/api/debug-log</a></p>
+            <table><tr><th>Time (GMT+8)</th><th>Method</th><th>Path</th><th>Matched Route</th><th>Outcome</th><th>IP</th><th>Body Read</th><th>Detail</th><th>Body Preview</th></tr>
+            {rows}</table></body></html>"""
+            self._send_response(200, html, "text/html; charset=utf-8")
+            return
+
         if self.path == "/health" or self.path == "/api/health":
             self._send_response(200, {
                 "status": "healthy",
@@ -459,6 +581,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 "r2_bucket": R2_BUCKET_NAME,
                 "r2_public_cdn": R2_PUBLIC_URL,
                 "webhook_endpoint": "/webhook/email-received",
+                "debug_log_page": "/debug",
+                "debug_log_api": "/api/debug-log",
                 "manager_queue_page": "/queue",
                 "media_gallery_page": "/gallery",
                 "documentation": "/docs"
@@ -476,6 +600,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 self._send_response(200, f.read(), ctype)
             return
 
+        log_inbound_request(self, b"", "unmatched", "404_no_route_matched", {})
         self._send_response(404, {"error": f"File or route not found: {self.path}"})
 
     def do_POST(self):
@@ -574,12 +699,16 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
 
         if self.path == "/webhook/email-received" or self.path == "/api/v1/pr-email-webhook":
             context = get_request_context(self)
-            content_length = int(self.headers.get("Content-Length", 0))
-            body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
+            body_bytes = read_request_body(self)
+            content_length = self.headers.get("Content-Length")
             try:
-                payload = json.loads(body_bytes.decode("utf-8"))
-            except Exception:
+                payload = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
+            except Exception as e:
                 payload = {}
+                log_inbound_request(self, body_bytes, "webhook/email-received", "rejected_invalid_json",
+                                     {"error": str(e)})
+                self._send_response(400, {"error": f"Invalid JSON payload: {e}"})
+                return
 
             email_id = payload.get("email_id") or payload.get("id") or payload.get("email", {}).get("email_id")
 
@@ -589,6 +718,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     status="failed", context=context, actor_kind="system",
                     metadata={"endpoint": context["path"], "content_length": content_length},
                 )
+                log_inbound_request(self, body_bytes, "webhook/email-received", "rejected_missing_email_id",
+                                     {"payload_keys": list(payload.keys())})
                 self._send_response(400, {"error": "Missing email_id in webhook payload"})
                 return
 
@@ -601,6 +732,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     status="failed", context=context, actor_kind="system",
                     metadata={"endpoint": context["path"], "content_length": content_length, "error_type": type(exc).__name__},
                 )
+                log_inbound_request(self, body_bytes, "webhook/email-received", "processing_error",
+                                     {"email_id": email_id, "error_type": type(exc).__name__, "error": str(exc)})
                 self._send_response(500, {"error": "Unable to process inbound PR request"})
                 return
 
@@ -614,6 +747,13 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     "manager_question_generated": result.get("manager_question_generated", False),
                 },
             )
+            log_inbound_request(self, body_bytes, "webhook/email-received",
+                                 "queued" if result.get("manager_question_generated") else "processed_no_queue_card",
+                                 {
+                                     "email_id": email_id,
+                                     "category": result.get("llm_result", {}).get("category"),
+                                     "manager_question_generated": result.get("manager_question_generated", False),
+                                 })
             self._send_response(200, {
                 "success": True,
                 "message": "Email analyzed by MiniMax-M3 LLM, executable tasks & questions generated, marked as read on EE-Mail server.",
@@ -689,6 +829,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {"success": True, "message": f"Recorded manager choice: '{chosen_opt}'"})
             return
 
+        unmatched_body = read_request_body(self)
+        log_inbound_request(self, unmatched_body, "unmatched", "404_no_route_matched", {})
         self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
