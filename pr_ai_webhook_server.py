@@ -435,7 +435,7 @@ def process_incoming_email(email_id, raw_payload=None):
     
     if fetch_res and fetch_res.get("data"):
         data_obj = fetch_res["data"]
-        seda_task = data_obj.get("sedaTask", {}).get("task", {})
+        seda_task = (data_obj.get("sedaTask") or {}).get("task") or {}
         if seda_task:
             subj = f"SEDA Task: {seda_task.get('task_type', 'APPROVAL')} - {seda_task.get('customer_name', '')}"
             
@@ -710,7 +710,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 self._send_response(400, {"error": f"Invalid JSON payload: {e}"})
                 return
 
-            email_id = payload.get("email_id") or payload.get("id") or payload.get("email", {}).get("email_id")
+            email_id = payload.get("email_id") or payload.get("id") or (payload.get("email") or {}).get("email_id")
 
             if not email_id:
                 log_activity(
