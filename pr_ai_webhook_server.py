@@ -117,10 +117,11 @@ def log_page_visit(handler, page_name):
         metadata={"http_method": "GET", "referer": context["referer"]},
     )
 
-# MiniMax-M3 LLM Configuration (from Hermes Vault)
-MINIMAX_API_KEY = os.environ.get("MINIMAX_API_KEY", "sk-cp-Mn15gRFLBQz1Rb5roxtNLoet9MDnGLTiET3I2YmebEWr4WOvgQLOei3D48o2HIrm36pcF8aA1shygKt1WMWrNy-ca5Cr1cij4MxOOTHZkRBmfPLKBpXBMuo")
-MINIMAX_URL = os.environ.get("MINIMAX_URL", "https://api.minimax.io/anthropic/v1/messages")
-LLM_MODEL = os.environ.get("LLM_MODEL", "MiniMax-M3")
+# Stepfun LLM Configuration. Key must be supplied at runtime via env var (Railway),
+# never hardcoded here -- this repo may be published.
+STEPFUN_API_KEY = os.environ.get("STEPFUN_API_KEY", "")
+STEPFUN_URL = os.environ.get("STEPFUN_URL", "https://api.stepfun.ai/step_plan/v1/messages")
+LLM_MODEL = os.environ.get("LLM_MODEL", "step-3.7-flash")
 
 # Cloudflare R2 Environment Variables
 R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "58cac85585fb6057edd57010616be145")
@@ -359,7 +360,7 @@ def call_api(method, path, body=None):
         print(f"API Error {method} {path}: {e}")
         return None
 
-def analyze_email_with_minimax(subj, sender, body_text):
+def analyze_email_with_stepfun(subj, sender, body_text):
     # Strictly instruct LLM to provide ONLY technically executable system options
     prompt_text = f"""Analyze the following corporate email received at Eternalgy PR Office:
 Sender: {sender}
@@ -385,36 +386,59 @@ Respond ONLY in strict raw JSON without Markdown formatting:
   "manager_options": ["Option 1", "Option 2", "Option 3"]
 }}"""
 
+    if not STEPFUN_API_KEY:
+        print("Stepfun API Exception (using robust executable fallback): STEPFUN_API_KEY not configured")
+        category = "CERTIFICATE_UPDATE" if ("seda" in subj.lower() or "cert" in subj.lower()) else "PRESS_RELEASE"
+        return {
+            "category": category,
+            "headline": subj or "Corporate Announcement",
+            "summary": f"Communication from {sender} regarding {subj}.",
+            "requires_manager_decision": True,
+            "manager_question": f"New {category} email received: '{subj}'. Select executable action for PR Hub:",
+            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"]
+        }
+
     headers = {
-        "Authorization": f"Bearer {MINIMAX_API_KEY}",
-        "x-api-key": MINIMAX_API_KEY,
+        "Authorization": f"Bearer {STEPFUN_API_KEY}",
+        "x-api-key": STEPFUN_API_KEY,
         "Content-Type": "application/json",
         "anthropic-version": "2023-06-01"
     }
 
     payload = {
         "model": LLM_MODEL,
-        "max_tokens": 500,
+        # step-3.7-flash is a reasoning model: it spends output tokens on a "thinking"
+        # block before the final "text" block. 500 was measured to truncate mid-thought
+        # (stop_reason "max_tokens", no text block at all). A short test email alone used
+        # ~900 output tokens; 2000 leaves headroom for longer inbound email bodies.
+        "max_tokens": 2000,
         "messages": [
             {"role": "user", "content": prompt_text}
         ]
     }
 
     try:
-        req = urllib.request.Request(MINIMAX_URL, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        req = urllib.request.Request(STEPFUN_URL, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=20) as resp:
             res_data = json.loads(resp.read().decode('utf-8'))
             content_list = res_data.get("content", [])
-            text_resp = content_list[0].get("text", "") if content_list else ""
-            
+            # Reasoning models return multiple content blocks (e.g. "thinking" then
+            # "text"). Scan for the first "text" block instead of assuming index [0],
+            # which would silently grab the thinking block and always fail to parse.
+            text_resp = ""
+            for block in content_list:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    text_resp = block.get("text", "")
+                    break
+
             if "```json" in text_resp:
                 text_resp = text_resp.split("```json")[1].split("```")[0].strip()
             elif "```" in text_resp:
                 text_resp = text_resp.split("```")[1].split("```")[0].strip()
-                
+
             return json.loads(text_resp)
     except Exception as e:
-        print(f"MiniMax-M3 API Exception (using robust executable fallback): {e}")
+        print(f"Stepfun API Exception (using robust executable fallback): {e}")
         category = "CERTIFICATE_UPDATE" if ("seda" in subj.lower() or "cert" in subj.lower()) else "PRESS_RELEASE"
         return {
             "category": category,
@@ -442,8 +466,8 @@ def process_incoming_email(email_id, raw_payload=None):
     if not subj:
         subj = f"PR Communication (ID: {email_id})"
         
-    llm_result = analyze_email_with_minimax(subj, sender, body_text)
-    print(f"MiniMax-M3 Analysis Result: {llm_result}")
+    llm_result = analyze_email_with_stepfun(subj, sender, body_text)
+    print(f"Stepfun ({LLM_MODEL}) Analysis Result: {llm_result}")
     
     state = load_state()
     
@@ -468,7 +492,7 @@ def process_incoming_email(email_id, raw_payload=None):
     
     return {
         "email_id": email_id,
-        "llm_engine": "MiniMax-M3",
+        "llm_engine": f"Stepfun ({LLM_MODEL})",
         "llm_result": llm_result,
         "manager_question_generated": q_card is not None
     }
@@ -574,7 +598,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {
                 "status": "healthy",
                 "service": "Eternalgy Corporate PR & Media Center",
-                "llm_engine": "MiniMax-M3",
+                "llm_engine": f"Stepfun ({LLM_MODEL})",
                 "image_optimization": "enabled (Pillow 12.1.0 + WebP auto-compress)",
                 "image_optimizer_endpoint": "/api/optimize-image",
                 "cloud_storage": "Cloudflare R2",
@@ -763,7 +787,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                                  })
             self._send_response(200, {
                 "success": True,
-                "message": "Email analyzed by MiniMax-M3 LLM, executable tasks & questions generated, marked as read on EE-Mail server.",
+                "message": f"Email analyzed by Stepfun ({LLM_MODEL}) LLM, executable tasks & questions generated, marked as read on EE-Mail server.",
                 "data": result
             })
             return
