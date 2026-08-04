@@ -395,7 +395,11 @@ Respond ONLY in strict raw JSON without Markdown formatting:
             "summary": f"Communication from {sender} regarding {subj}.",
             "requires_manager_decision": True,
             "manager_question": f"New {category} email received: '{subj}'. Select executable action for PR Hub:",
-            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"]
+            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"],
+            # Not persisted to state -- process_incoming_email pops this and surfaces it
+            # in /debug so LLM call outcomes are visible without relying on stdout logs,
+            # which are block-buffered in this container and effectively invisible.
+            "_llm_debug": {"success": False, "reason": "STEPFUN_API_KEY not configured"}
         }
 
     headers = {
@@ -436,7 +440,13 @@ Respond ONLY in strict raw JSON without Markdown formatting:
             elif "```" in text_resp:
                 text_resp = text_resp.split("```")[1].split("```")[0].strip()
 
-            return json.loads(text_resp)
+            parsed = json.loads(text_resp)
+            if isinstance(parsed, dict):
+                parsed["_llm_debug"] = {"success": True}
+                return parsed
+            # Valid JSON but not an object (e.g. a bare array) -- treat as a parse failure
+            # rather than returning something process_incoming_email can't .get() safely.
+            raise ValueError(f"Stepfun returned non-object JSON: {type(parsed).__name__}")
     except Exception as e:
         print(f"Stepfun API Exception (using robust executable fallback): {e}")
         category = "CERTIFICATE_UPDATE" if ("seda" in subj.lower() or "cert" in subj.lower()) else "PRESS_RELEASE"
@@ -446,7 +456,8 @@ Respond ONLY in strict raw JSON without Markdown formatting:
             "summary": f"Communication from {sender} regarding {subj}.",
             "requires_manager_decision": True,
             "manager_question": f"New {category} email received: '{subj}'. Select executable action for PR Hub:",
-            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"]
+            "manager_options": ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "🖼️ Upload to Cloudflare R2 Gallery", "⏸️ Hold / Archive"],
+            "_llm_debug": {"success": False, "reason": str(e), "error_type": type(e).__name__}
         }
 
 def process_incoming_email(email_id, raw_payload=None):
@@ -467,10 +478,11 @@ def process_incoming_email(email_id, raw_payload=None):
         subj = f"PR Communication (ID: {email_id})"
         
     llm_result = analyze_email_with_stepfun(subj, sender, body_text)
+    llm_debug = llm_result.pop("_llm_debug", {"success": None, "reason": "no debug info attached"})
     print(f"Stepfun ({LLM_MODEL}) Analysis Result: {llm_result}")
-    
+
     state = load_state()
-    
+
     q_card = None
     if llm_result.get("requires_manager_decision"):
         q_card = {
@@ -494,6 +506,7 @@ def process_incoming_email(email_id, raw_payload=None):
         "email_id": email_id,
         "llm_engine": f"Stepfun ({LLM_MODEL})",
         "llm_result": llm_result,
+        "llm_debug": llm_debug,
         "manager_question_generated": q_card is not None
     }
 
@@ -784,6 +797,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                                      "email_id": email_id,
                                      "category": result.get("llm_result", {}).get("category"),
                                      "manager_question_generated": result.get("manager_question_generated", False),
+                                     "llm_debug": result.get("llm_debug"),
                                  })
             self._send_response(200, {
                 "success": True,
