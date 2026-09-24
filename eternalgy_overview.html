@@ -1673,27 +1673,59 @@
         let attachmentsHtml = '';
         if (item.attachments && item.attachments.length > 0) {
           attachmentsHtml = `
-            <div style="margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 10px;">
-              <div style="font-size: 12px; color: var(--primary-light); font-weight: 700; margin-bottom: 6px;">
-                📎 Email Attachment (${item.attachments.length}):
+            <div style="margin-top: 14px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 10px;">
+              <div style="font-size: 12px; color: var(--primary-light); font-weight: 700; margin-bottom: 8px;">
+                📎 Email Attachments (${item.attachments.length}):
               </div>
-              ${item.attachments.map(att => `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 12.5px; border: 1px solid rgba(255,255,255,0.06);">
-                  <span style="color: #fff; font-family: monospace;">📄 ${att.filename || 'attachment'}</span>
-                  <span style="color: var(--text-muted); font-size: 11px;">${att.content_type || ''}</span>
-                </div>
-              `).join('')}
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${item.attachments.map(att => {
+                  const url = att.url || att.download_url || (item.email_id ? `/api/attachment-proxy?email_id=${item.email_id}&att_id=${att.id || encodeURIComponent(att.filename)}` : '');
+                  const isImage = (att.content_type && att.content_type.startsWith('image/')) || (att.filename && att.filename.match(/\.(jpg|jpeg|png|webp|gif)$/i));
+                  const escapedTitle = (att.filename || 'Attachment').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                  if (isImage && url) {
+                    return `
+                      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 10px; padding: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                          <span style="color: #fff; font-family: monospace; font-size: 12px; word-break: break-all;">🖼️ ${att.filename}</span>
+                          <span style="color: var(--text-muted); font-size: 11px;">${att.content_type || 'image'}</span>
+                        </div>
+                        <div class="cert-preview-box" onclick="openOverviewModal('${url}', '${escapedTitle}')" style="max-height: 200px; overflow: hidden; border-radius: 8px; cursor: pointer; border: 1px solid rgba(52, 211, 153, 0.2); background: #000; position: relative;">
+                          <img src="${url}" alt="${att.filename}" style="width: 100%; height: 180px; object-fit: contain; background: #0a0f0d; display: block;" />
+                          <div class="cert-overlay-tag" style="position: absolute; bottom: 8px; right: 8px; background: rgba(4,9,6,0.85); color: #34d399; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(52,211,153,0.3);">
+                            🔍 Click to View Full Image ↗
+                          </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                          <button type="button" onclick="openOverviewModal('${url}', '${escapedTitle}')" class="btn-cta btn-primary" style="padding: 5px 12px; font-size: 11.5px;">👁️ View Image ↗</button>
+                          <a href="${url}" target="_blank" download="${att.filename}" class="btn-cta btn-outline" style="padding: 5px 12px; font-size: 11.5px; text-decoration: none;">📥 Download</a>
+                        </div>
+                      </div>
+                    `;
+                  }
+
+                  return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 8px; font-size: 12.5px; border: 1px solid rgba(255,255,255,0.06);">
+                      <span style="color: #fff; font-family: monospace;">📄 ${att.filename || 'attachment'}</span>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: var(--text-muted); font-size: 11px;">${att.content_type || ''}</span>
+                        ${url ? `<a href="${url}" target="_blank" download="${att.filename}" class="btn-cta btn-outline" style="padding: 3px 8px; font-size: 11px; text-decoration: none;">📥 Download</a>` : ''}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
             </div>
           `;
         }
 
         // Optional media image preview if an actual image was uploaded
         let mediaHtml = '';
-        if (item.media_url) {
+        if (item.media_url && (!item.attachments || !item.attachments.some(a => (a.url === item.media_url || a.download_url === item.media_url)))) {
           const escapedTitle = (item.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
           mediaHtml = `
-            <div class="cert-preview-box" onclick="openOverviewModal('${item.media_url}', '${escapedTitle}')" style="margin: 14px 0 6px; max-height: 180px; overflow: hidden; border-radius: 12px; cursor: pointer; border: 1px solid rgba(52, 211, 153, 0.25); background: #000; position: relative;">
-              <img src="${item.media_url}" alt="${item.title || 'PR Media'}" style="width: 100%; height: 160px; object-fit: cover; display: block;" />
+            <div class="cert-preview-box" onclick="openOverviewModal('${item.media_url}', '${escapedTitle}')" style="margin: 14px 0 6px; max-height: 200px; overflow: hidden; border-radius: 12px; cursor: pointer; border: 1px solid rgba(52, 211, 153, 0.25); background: #000; position: relative;">
+              <img src="${item.media_url}" alt="${item.title || 'PR Media'}" style="width: 100%; height: 180px; object-fit: contain; background: #0a0f0d; display: block;" />
               <div class="cert-overlay-tag" style="position: absolute; bottom: 8px; right: 8px; background: rgba(4,9,6,0.85); color: #34d399; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(52,211,153,0.3);">🔍 Preview Media ↗</div>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 10px;">

@@ -17,6 +17,34 @@
   },
   "manager_questions": [
     {
+      "question_id": "Q-4a517313-038e-4bd2-9312-63cff416de5a",
+      "email_id": "4a517313-038e-4bd2-9312-63cff416de5a",
+      "timestamp": "2026-09-24T07:28:20Z",
+      "category": "CERTIFICATE_UPDATE",
+      "email_subject": "New Safwan Certificate",
+      "sender": "zhihong0321@gmail.com",
+      "email_content": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪",
+      "attachments": [
+        {
+          "id": "05f18605-18ab-40c0-9e55-aa973fcf5d67",
+          "filename": "58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+          "content_type": "image/jpeg",
+          "url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+          "download_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg"
+        }
+      ],
+      "media_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+      "ai_analysis": "Safwan completed OSH-C course and acquired certified safety supervisor accreditation.",
+      "question": "Safwan OSH-C Certificate received. Select execution action for PR Hub:",
+      "options": [
+        "🌐 Publish to Live Public PR Feed",
+        "📁 Save to Compliance Vault Only",
+        "⏸️ Hold / Archive"
+      ],
+      "status": "RESOLVED",
+      "selected_option": "🌐 Publish to Live Public PR Feed"
+    },
+    {
       "question_id": "Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
       "email_id": "3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
       "timestamp": "2026-09-24T06:11:45.426269Z",
@@ -93,6 +121,26 @@
     }
   ],
   "published_updates": [
+    {
+      "id": "PUB-Q-4a517313-038e-4bd2-9312-63cff416de5a",
+      "category": "CERTIFICATE_UPDATE",
+      "title": "New Safwan Certificate (OSH-C Certified Safety Supervisor)",
+      "date": "2026-09-24",
+      "summary": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪",
+      "content": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪",
+      "sender": "zhihong0321@gmail.com",
+      "badge": "CERTIFICATE_UPDATE",
+      "media_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+      "attachments": [
+        {
+          "id": "05f18605-18ab-40c0-9e55-aa973fcf5d67",
+          "filename": "58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+          "content_type": "image/jpeg",
+          "url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg",
+          "download_url": "https://pub-31ab1252a5544ca19749b476315d9b01.r2.dev/pr-attachments/4a517313-038e-4bd2-9312-63cff416de5a/58a9850e-9b53-49f6-9298-d4fe5c1d592f.jpg"
+        }
+      ]
+    },
     {
       "id": "PUB-Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
       "category": "CERTIFICATE_UPDATE",

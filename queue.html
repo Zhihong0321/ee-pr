@@ -409,14 +409,46 @@
             </div>
             <div style="margin-top: 8px; white-space: pre-wrap; color: #e5e7eb; border-left: 2px solid var(--primary); padding-left: 12px; font-size: 13.5px; line-height: 1.6;">${q.email_content || q.ai_analysis || 'No content body'}</div>
             ${q.attachments && q.attachments.length > 0 ? `
-              <div style="margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px;">
-                <div style="color: var(--primary-light); font-size: 12px; font-weight: 700; margin-bottom: 6px;">📎 Email Attachments (${q.attachments.length}):</div>
-                ${q.attachments.map(a => `
-                  <div style="font-size: 12px; font-family: monospace; color: #fff; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; margin-bottom: 4px; display: flex; justify-content: space-between;">
-                    <span>📄 ${a.filename || 'attachment'}</span>
-                    <span style="color: var(--text-muted); font-size: 11px;">${a.content_type || ''}</span>
-                  </div>
-                `).join('')}
+              <div style="margin-top: 14px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 10px;">
+                <div style="color: var(--primary-light); font-size: 12px; font-weight: 700; margin-bottom: 8px;">📎 Email Attachments (${q.attachments.length}):</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${q.attachments.map(a => {
+                    const url = a.url || a.download_url || (q.email_id ? `/api/attachment-proxy?email_id=${q.email_id}&att_id=${a.id || encodeURIComponent(a.filename)}` : '');
+                    const isImage = (a.content_type && a.content_type.startsWith('image/')) || (a.filename && a.filename.match(/\.(jpg|jpeg|png|webp|gif)$/i));
+                    const safeTitle = (a.filename || 'Attachment').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                    if (isImage && url) {
+                      return `
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 10px; padding: 10px;">
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-size: 12px; font-family: monospace; color: #fff;">🖼️ ${a.filename}</span>
+                            <span style="color: var(--text-muted); font-size: 11px;">${a.content_type || 'image'}</span>
+                          </div>
+                          <div onclick="openImageModal('${url}', '${safeTitle}')" style="cursor: pointer; position: relative; border-radius: 8px; overflow: hidden; max-height: 180px; background: #000; border: 1px solid rgba(255,255,255,0.1);">
+                            <img src="${url}" alt="${a.filename}" style="width: 100%; height: 160px; object-fit: contain; background: #0a0f0d; display: block;" />
+                            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.85); color: #34d399; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(52,211,153,0.3);">
+                              🔍 Click to View ↗
+                            </div>
+                          </div>
+                          <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button type="button" onclick="openImageModal('${url}', '${safeTitle}')" class="btn-action btn-primary" style="padding: 5px 12px; font-size: 11.5px;">👁️ View Full Image</button>
+                            <a href="${url}" target="_blank" download="${a.filename}" class="btn-action" style="padding: 5px 12px; font-size: 11.5px; text-decoration: none;">📥 Download</a>
+                          </div>
+                        </div>
+                      `;
+                    }
+
+                    return `
+                      <div style="font-size: 12px; font-family: monospace; color: #fff; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📄 ${a.filename || 'attachment'}</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                          <span style="color: var(--text-muted); font-size: 11px;">${a.content_type || ''}</span>
+                          ${url ? `<a href="${url}" target="_blank" download="${a.filename}" class="btn-action" style="padding: 3px 8px; font-size: 11px; text-decoration: none;">📥 Download</a>` : ''}
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
               </div>
             ` : ''}
           </div>
@@ -463,7 +495,38 @@
       }
     }
 
+    function openImageModal(src, title) {
+      const m = document.getElementById('imageModal');
+      if (!m) return;
+      document.getElementById('imageModalImg').src = src;
+      document.getElementById('imageModalTitle').textContent = title || 'Image Preview';
+      document.getElementById('imageModalDownload').href = src;
+      m.style.display = 'flex';
+    }
+
+    function closeImageModal() {
+      const m = document.getElementById('imageModal');
+      if (m) m.style.display = 'none';
+    }
+
     document.addEventListener('DOMContentLoaded', fetchQueueState);
   </script>
+
+  <!-- Image Lightbox Modal -->
+  <div id="imageModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;" onclick="closeImageModal()">
+    <div style="max-width: 900px; width: 100%; background: #112017; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.7);" onclick="event.stopPropagation();">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--border-color);">
+        <h4 id="imageModalTitle" style="color: #fff; font-size: 16px; font-weight: 700; margin: 0;">Image Preview</h4>
+        <button onclick="closeImageModal()" style="background: none; border: none; color: #9ca3af; font-size: 24px; cursor: pointer; line-height: 1;">&times;</button>
+      </div>
+      <div style="padding: 16px; text-align: center; background: #000;">
+        <img id="imageModalImg" src="" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px;" />
+      </div>
+      <div style="padding: 12px 20px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color);">
+        <a id="imageModalDownload" href="" download class="btn-action btn-primary" style="text-decoration: none;">📥 Download Full Image</a>
+        <button onclick="closeImageModal()" class="btn-action" style="background: rgba(255,255,255,0.05);">Close</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

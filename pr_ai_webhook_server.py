@@ -460,6 +460,63 @@ Respond ONLY in strict raw JSON without Markdown formatting:
             "_llm_debug": {"success": False, "reason": str(e), "error_type": type(e).__name__}
         }
 
+def enrich_and_mirror_attachments(email_id, attachments):
+    """
+    Fetches real signed CDN download URLs from ee-mail /received-emails/{id}/attachments.
+    If R2 storage is available, uploads a permanent copy to Cloudflare R2 so URLs never expire.
+    Returns (enriched_attachments, primary_image_url).
+    """
+    primary_image_url = None
+    if not email_id or not attachments:
+        return attachments, None
+
+    url_map = {}
+    try:
+        att_res = call_api("GET", f"/received-emails/{email_id}/attachments")
+        if att_res and isinstance(att_res.get("data"), dict):
+            for item in att_res["data"].get("data", []):
+                d_url = item.get("download_url")
+                if d_url:
+                    if item.get("id"):
+                        url_map[str(item["id"])] = d_url
+                    if item.get("filename"):
+                        url_map[item["filename"]] = d_url
+    except Exception as e:
+        print(f"Error fetching attachment download URLs for {email_id}: {e}")
+
+    enriched = []
+    for a in attachments:
+        item = dict(a)
+        att_id = str(item.get("id") or "")
+        filename = item.get("filename") or "attachment"
+        content_type = item.get("content_type") or "application/octet-stream"
+        is_image = content_type.startswith("image/") or filename.lower().endswith((".jpg", ".jpeg", ".png", ".webp", ".gif"))
+
+        download_url = url_map.get(att_id) or url_map.get(filename) or item.get("download_url") or item.get("url")
+        permanent_url = download_url
+
+        client = get_r2_client()
+        if client and download_url and download_url.startswith("http"):
+            try:
+                req = urllib.request.Request(download_url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=10) as r:
+                    file_bytes = r.read()
+                r2_key = f"pr-attachments/{email_id}/{filename}"
+                r2_url = upload_bytes_to_r2(r2_key, file_bytes, content_type)
+                if r2_url:
+                    permanent_url = r2_url
+            except Exception as e:
+                print(f"Failed to mirror attachment {filename} to R2: {e}")
+
+        item["url"] = permanent_url or f"/api/attachment-proxy?email_id={email_id}&att_id={att_id}"
+        item["download_url"] = permanent_url or f"/api/attachment-proxy?email_id={email_id}&att_id={att_id}"
+        enriched.append(item)
+
+        if is_image and not primary_image_url and permanent_url:
+            primary_image_url = permanent_url
+
+    return enriched, primary_image_url
+
 def process_incoming_email(email_id, raw_payload=None):
     print(f"Processing incoming email notification: {email_id}...")
     call_api("POST", "/received-emails/fetch", {"email_id": str(email_id)})
@@ -471,7 +528,8 @@ def process_incoming_email(email_id, raw_payload=None):
     subj = email_data.get("subject") or (raw_payload.get("subject") if raw_payload else "") or f"PR Communication (ID: {email_id})"
     sender = email_data.get("from_email") or email_data.get("from") or (raw_payload.get("from") if raw_payload else "") or ""
     body_text = email_data.get("text_content") or email_data.get("html_content") or (raw_payload.get("text_content") if raw_payload else "") or ""
-    attachments = email_data.get("attachments") or []
+    raw_attachments = email_data.get("attachments") or []
+    attachments, primary_image_url = enrich_and_mirror_attachments(email_id, raw_attachments)
 
     seda_task = (email_data.get("sedaTask") or {}).get("task") or {}
     if seda_task:
@@ -494,6 +552,7 @@ def process_incoming_email(email_id, raw_payload=None):
             "sender": sender,
             "email_content": body_text,
             "attachments": attachments,
+            "media_url": primary_image_url,
             "ai_analysis": body_text if body_text else (llm_result.get("summary") or f"Email from {sender}"),
             "question": llm_result.get("manager_question", f"New email received: '{subj}'. Select executable action for PR Hub:"),
             "options": llm_result.get("manager_options", ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "⏸️ Hold / Archive"]),
@@ -584,6 +643,32 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             entries = load_debug_log(limit)
             self._send_response(200, {"count": len(entries), "entries": entries})
             return
+
+        if clean_path == "/api/attachment-proxy":
+            qs = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+            email_id = (qs.get("email_id") or [None])[0]
+            att_id = (qs.get("att_id") or qs.get("id") or [None])[0]
+            if not email_id:
+                self._send_response(400, {"error": "email_id is required"})
+                return
+            try:
+                att_res = call_api("GET", f"/received-emails/{email_id}/attachments")
+                if att_res and isinstance(att_res.get("data"), dict):
+                    items = att_res["data"].get("data", [])
+                    target = next((item for item in items if str(item.get("id")) == str(att_id) or item.get("filename") == att_id), None)
+                    if not target and items:
+                        target = items[0]
+                    if target and target.get("download_url"):
+                        self.send_response(302)
+                        self.send_header("Location", target["download_url"])
+                        self.send_header("Cache-Control", "no-cache")
+                        self.end_headers()
+                        return
+                self._send_response(404, {"error": "Attachment not found"})
+                return
+            except Exception as e:
+                self._send_response(500, {"error": str(e)})
+                return
 
         if clean_path.startswith("/debug"):
             entries = load_debug_log(100)
@@ -862,6 +947,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                         "content": email_body,
                         "summary": email_body,
                         "attachments": q.get("attachments", []),
+                        "media_url": q.get("media_url"),
                         "badge": q.get("category", "PR UPDATE")
                     })
                     break
