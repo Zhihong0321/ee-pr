@@ -462,24 +462,24 @@ Respond ONLY in strict raw JSON without Markdown formatting:
 
 def process_incoming_email(email_id, raw_payload=None):
     print(f"Processing incoming email notification: {email_id}...")
-    fetch_res = call_api("POST", "/received-emails/fetch", {"email_id": str(email_id)})
+    call_api("POST", "/received-emails/fetch", {"email_id": str(email_id)})
     
-    subj = raw_payload.get("subject", "") if raw_payload else ""
-    sender = raw_payload.get("from", "") if raw_payload else ""
-    body_text = raw_payload.get("text_content", "") if raw_payload else ""
-    
-    if fetch_res and fetch_res.get("data"):
-        data_obj = fetch_res["data"]
-        seda_task = (data_obj.get("sedaTask") or {}).get("task") or {}
-        if seda_task:
-            subj = f"SEDA Task: {seda_task.get('task_type', 'APPROVAL')} - {seda_task.get('customer_name', '')}"
-            
-    if not subj:
-        subj = f"PR Communication (ID: {email_id})"
+    # Fetch real email details from mail server
+    email_details = call_api("GET", f"/received-emails/{email_id}")
+    email_data = (email_details or {}).get("data") or {}
+
+    subj = email_data.get("subject") or (raw_payload.get("subject") if raw_payload else "") or f"PR Communication (ID: {email_id})"
+    sender = email_data.get("from_email") or email_data.get("from") or (raw_payload.get("from") if raw_payload else "") or ""
+    body_text = email_data.get("text_content") or email_data.get("html_content") or (raw_payload.get("text_content") if raw_payload else "") or ""
+    attachments = email_data.get("attachments") or []
+
+    seda_task = (email_data.get("sedaTask") or {}).get("task") or {}
+    if seda_task:
+        subj = f"SEDA Task: {seda_task.get('task_type', 'APPROVAL')} - {seda_task.get('customer_name', '')}"
         
     llm_result = analyze_email_with_stepfun(subj, sender, body_text)
     llm_debug = llm_result.pop("_llm_debug", {"success": None, "reason": "no debug info attached"})
-    print(f"Stepfun ({LLM_MODEL}) Analysis Result: {llm_result}")
+    print(f"Analysis Result: category={llm_result.get('category')} subject={subj}")
 
     state = load_state()
 
@@ -489,11 +489,14 @@ def process_incoming_email(email_id, raw_payload=None):
             "question_id": f"Q-{email_id}",
             "email_id": email_id,
             "timestamp": datetime.utcnow().isoformat() + "Z",
-            "category": llm_result.get("category", "PRESS_RELEASE"),
+            "category": llm_result.get("category", "CERTIFICATE_UPDATE" if "cert" in subj.lower() else "PRESS_RELEASE"),
             "email_subject": subj,
-            "ai_analysis": llm_result.get("summary", ""),
-            "question": llm_result.get("manager_question", f"How should we proceed with {subj}?"),
-            "options": llm_result.get("manager_options", ["🌐 Publish to Live PR Feed", "📁 Save to Vault"]),
+            "sender": sender,
+            "email_content": body_text,
+            "attachments": attachments,
+            "ai_analysis": body_text if body_text else (llm_result.get("summary") or f"Email from {sender}"),
+            "question": llm_result.get("manager_question", f"New email received: '{subj}'. Select executable action for PR Hub:"),
+            "options": llm_result.get("manager_options", ["🌐 Publish to Live Public PR Feed", "📁 Save to Compliance Vault Only", "⏸️ Hold / Archive"]),
             "status": "WAITING_FOR_MANAGER",
             "selected_option": None
         }
@@ -848,12 +851,16 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                         p for p in state.get("published_updates", [])
                         if p.get("id") != pub_id
                     ]
+                    email_body = q.get("email_content") or q.get("ai_analysis") or ""
                     state["published_updates"].insert(0, {
                         "id": pub_id,
                         "category": q.get("category", "PRESS_RELEASE"),
                         "title": q.get("email_subject", "PR Announcement"),
+                        "sender": q.get("sender", ""),
                         "date": datetime.utcnow().strftime("%Y-%m-%d"),
-                        "summary": f"Manager Selected: '{chosen_opt}'. {q.get('ai_analysis', '')}",
+                        "content": email_body,
+                        "summary": email_body,
+                        "attachments": q.get("attachments", []),
                         "badge": q.get("category", "PR UPDATE")
                     })
                     break

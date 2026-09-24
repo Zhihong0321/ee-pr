@@ -382,10 +382,24 @@
             ${q.question}
           </h3>
 
-          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
-            <strong style="color: var(--primary-light);">Subject:</strong> ${q.email_subject}<br/>
-            <strong style="color: var(--primary-light);">MiniMax-M3 AI Analysis:</strong> ${q.ai_analysis}
-          </p>
+          <div style="font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin-bottom: 18px; background: rgba(0,0,0,0.3); padding: 14px 16px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="margin-bottom: 8px;">
+              <strong style="color: var(--primary-light);">Subject:</strong> <span style="color: #fff; font-weight: 700;">${q.email_subject}</span>
+              ${q.sender ? `<span style="color: var(--text-muted); margin-left: 10px; font-size: 12px;">(From: ${q.sender})</span>` : ''}
+            </div>
+            <div style="margin-top: 8px; white-space: pre-wrap; color: #e5e7eb; border-left: 2px solid var(--primary); padding-left: 12px; font-size: 13.5px; line-height: 1.6;">${q.email_content || q.ai_analysis || 'No content body'}</div>
+            ${q.attachments && q.attachments.length > 0 ? `
+              <div style="margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px;">
+                <div style="color: var(--primary-light); font-size: 12px; font-weight: 700; margin-bottom: 6px;">📎 Email Attachments (${q.attachments.length}):</div>
+                ${q.attachments.map(a => `
+                  <div style="font-size: 12px; font-family: monospace; color: #fff; background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 6px; margin-bottom: 4px; display: flex; justify-content: space-between;">
+                    <span>📄 ${a.filename || 'attachment'}</span>
+                    <span style="color: var(--text-muted); font-size: 11px;">${a.content_type || ''}</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
             ${optionsHtml}

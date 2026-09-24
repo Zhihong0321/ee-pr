@@ -1,114 +1,132 @@
 {
-    "last_updated":  "2026-09-24 14:13:15 GMT+8",
-    "metrics":  {
-                    "installed_kwp":  10750.99,
-                    "installed_mwp":  10.75,
-                    "installed_projects_count":  925,
-                    "seda_registrations_count":  11485,
-                    "total_clients_count":  7177,
-                    "total_invoices_count":  8107,
-                    "last_verified":  "2026-07-24",
-                    "last_check_date":  "2026-07-24 18:04:09 GMT+8",
-                    "paid_clients_invoices_count":  1034,
-                    "total_revenue_rm":  28149508.59,
-                    "total_revenue_millions":  28.15,
-                    "total_invoice_contracting_value_rm":  29278036.04,
-                    "total_gross_payments_collected_rm":  28971995.94
-                },
-    "manager_questions":  [
-                              {
-                                  "question_id":  "Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
-                                  "email_id":  "3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
-                                  "timestamp":  "2026-09-24T06:11:45.426269Z",
-                                  "category":  "CERTIFICATE_UPDATE",
-                                  "email_subject":  "new Certification",
-                                  "ai_analysis":  "Communication from zhihong@eternalgy.me regarding new Certification.",
-                                  "question":  "New CERTIFICATE_UPDATE email received: \u0027new Certification\u0027. Select executable action for PR Hub:",
-                                  "options":  [
-                                                  "🌐 Publish to Live Public PR Feed",
-                                                  "📁 Save to Compliance Vault Only",
-                                                  "🖼️ Upload to Cloudflare R2 Gallery",
-                                                  "⏸️ Hold / Archive"
-                                              ],
-                                  "status":  "RESOLVED",
-                                  "selected_option":  "🌐 Publish to Live Public PR Feed"
-                              },
-                              {
-                                  "question_id":  "Q-2121",
-                                  "email_id":  2121,
-                                  "timestamp":  "2026-07-24T16:53:00Z",
-                                  "category":  "AWARD_RECOGNITION",
-                                  "email_subject":  "Malaysia Book of Records Achievement",
-                                  "ai_analysis":  "Eternalgy PR office received notification for a Malaysia Book of Records achievement. Formatted for executive review.",
-                                  "question":  "Malaysia Book of Records Achievement received. Select execution action for PR Hub:",
-                                  "options":  [
-                                                  "🌐 Publish Featured Story on Live Corporate PR Feed",
-                                                  "📁 Save to Official Compliance \u0026 Awards Vault",
-                                                  "🖼️ Upload Award Photos to Cloudflare R2 Media Gallery",
-                                                  "⏸️ Hold in Archive Queue"
-                                              ],
-                                  "status":  "WAITING_FOR_MANAGER",
-                                  "selected_option":  null
-                              },
-                              {
-                                  "question_id":  "Q-2090",
-                                  "email_id":  2090,
-                                  "timestamp":  "2026-07-23T08:19:10Z",
-                                  "category":  "AWARD_RECOGNITION",
-                                  "email_subject":  "Nomination Notice for SME Excellence Business Award 2026/2027",
-                                  "ai_analysis":  "Official nomination notice received for ETERNALGY SDN BHD / Mr. Gan Lai Soon for SME Excellence Business Award 2026/2027.",
-                                  "question":  "SME Excellence Business Award Nomination Notice received. Select execution action:",
-                                  "options":  [
-                                                  "📁 Save Nomination Documents to Compliance Vault",
-                                                  "🖼️ Upload Nomination Attachments to Cloudflare R2 Gallery",
-                                                  "⏸️ Hold for Manager Audit"
-                                              ],
-                                  "status":  "WAITING_FOR_MANAGER",
-                                  "selected_option":  null
-                              },
-                              {
-                                  "question_id":  "Q-2110",
-                                  "email_id":  "589112fd-439f-4213-9343-5192a759ec87",
-                                  "timestamp":  "2026-07-24T02:44:44Z",
-                                  "category":  "CERTIFICATE_UPDATE",
-                                  "email_subject":  "ATP202617521: Approval for eATAP Application",
-                                  "ai_analysis":  "SEDA/TNB Interconnection Approval received for 500kWp commercial solar installation in Johor.",
-                                  "question":  "New SEDA eATAP Interconnection Approval received for 500kWp Industrial Plant. Select execution action:",
-                                  "options":  [
-                                                  "🌐 Publish Featured Case Study on Live PR Feed",
-                                                  "📁 Save to SEDA Compliance Vault Only",
-                                                  "⏸️ Hold for Batch Update"
-                                              ],
-                                  "status":  "WAITING_FOR_MANAGER",
-                                  "selected_option":  null
-                              }
-                          ],
-    "published_updates":  [
-                              {
-                                  "id":  "PUB-Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
-                                  "category":  "CERTIFICATE_UPDATE",
-                                  "title":  "new Certification",
-                                  "date":  "2026-09-24",
-                                  "summary":  "Manager Selected: \u0027🌐 Publish to Live Public PR Feed\u0027. Communication from zhihong@eternalgy.me regarding new Certification.",
-                                  "badge":  "CERTIFICATE_UPDATE"
-                              },
-                              {
-                                  "id":  "PUB-101",
-                                  "category":  "CERTIFICATE_UPDATE",
-                                  "title":  "CIDB Grade G7 Unlimited Contractor License Renewed",
-                                  "date":  "2026-07-24",
-                                  "summary":  "Official CIDB Grade G7 accreditation re-certified across Building (B04), Civil (CE21) and Electrical (M15) categories.",
-                                  "badge":  "CIDB G7",
-                                  "media_url":  "Reference/Eternalgy_Cert_CIDB.png"
-                              },
-                              {
-                                  "id":  "PUB-102",
-                                  "category":  "AWARD_RECOGNITION",
-                                  "title":  "Malaysia Golden Bull Outstanding Enterprise Award Winner",
-                                  "date":  "2026-07-23",
-                                  "summary":  "Eternalgy recognized at the Malaysia Golden Bull Awards for excellence in renewable energy deployment and client trust.",
-                                  "badge":  "GOLDEN BULL",
-                                  "media_url":  "Reference/Eternalgy_Award_GoldenBull.png"
-                              }
-                          ]
+  "last_updated": "2026-09-24 14:13:15 GMT+8",
+  "metrics": {
+    "installed_kwp": 10750.99,
+    "installed_mwp": 10.75,
+    "installed_projects_count": 925,
+    "seda_registrations_count": 11485,
+    "total_clients_count": 7177,
+    "total_invoices_count": 8107,
+    "last_verified": "2026-07-24",
+    "last_check_date": "2026-07-24 18:04:09 GMT+8",
+    "paid_clients_invoices_count": 1034,
+    "total_revenue_rm": 28149508.59,
+    "total_revenue_millions": 28.15,
+    "total_invoice_contracting_value_rm": 29278036.04,
+    "total_gross_payments_collected_rm": 28971995.94
+  },
+  "manager_questions": [
+    {
+      "question_id": "Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
+      "email_id": "3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
+      "timestamp": "2026-09-24T06:11:45.426269Z",
+      "category": "CERTIFICATE_UPDATE",
+      "email_subject": "new Certification",
+      "ai_analysis": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪\n\n📌 行动事项\n@Adam Ong \n@Digital Marketing Team @Leon Eternalgy  @IT 部门 @Zhi Hong Gan  请主动把这项认证加入：\n* 公司网站\n* 公司手册 / Company Profile\n* 所有 Proposal 模板\n* Sales Kit",
+      "question": "New CERTIFICATE_UPDATE email received: 'new Certification'. Select executable action for PR Hub:",
+      "options": [
+        "🌐 Publish to Live Public PR Feed",
+        "📁 Save to Compliance Vault Only",
+        "🖼️ Upload to Cloudflare R2 Gallery",
+        "⏸️ Hold / Archive"
+      ],
+      "status": "RESOLVED",
+      "selected_option": "🌐 Publish to Live Public PR Feed",
+      "sender": "zhihong@eternalgy.me",
+      "email_content": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪\n\n📌 行动事项\n@Adam Ong \n@Digital Marketing Team @Leon Eternalgy  @IT 部门 @Zhi Hong Gan  请主动把这项认证加入：\n* 公司网站\n* 公司手册 / Company Profile\n* 所有 Proposal 模板\n* Sales Kit",
+      "attachments": [
+        {
+          "id": "d9f837be-3814-4e1f-8a9f-50f47fc96d1e",
+          "filename": "tspec_62c253c2b65f4735ba5cf0edf04886b3_runs_1_rows.csv",
+          "content_type": "text/csv"
+        }
+      ]
+    },
+    {
+      "question_id": "Q-2121",
+      "email_id": 2121,
+      "timestamp": "2026-07-24T16:53:00Z",
+      "category": "AWARD_RECOGNITION",
+      "email_subject": "Malaysia Book of Records Achievement",
+      "ai_analysis": "Eternalgy PR office received notification for a Malaysia Book of Records achievement. Formatted for executive review.",
+      "question": "Malaysia Book of Records Achievement received. Select execution action for PR Hub:",
+      "options": [
+        "🌐 Publish Featured Story on Live Corporate PR Feed",
+        "📁 Save to Official Compliance & Awards Vault",
+        "🖼️ Upload Award Photos to Cloudflare R2 Media Gallery",
+        "⏸️ Hold in Archive Queue"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    },
+    {
+      "question_id": "Q-2090",
+      "email_id": 2090,
+      "timestamp": "2026-07-23T08:19:10Z",
+      "category": "AWARD_RECOGNITION",
+      "email_subject": "Nomination Notice for SME Excellence Business Award 2026/2027",
+      "ai_analysis": "Official nomination notice received for ETERNALGY SDN BHD / Mr. Gan Lai Soon for SME Excellence Business Award 2026/2027.",
+      "question": "SME Excellence Business Award Nomination Notice received. Select execution action:",
+      "options": [
+        "📁 Save Nomination Documents to Compliance Vault",
+        "🖼️ Upload Nomination Attachments to Cloudflare R2 Gallery",
+        "⏸️ Hold for Manager Audit"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    },
+    {
+      "question_id": "Q-2110",
+      "email_id": "589112fd-439f-4213-9343-5192a759ec87",
+      "timestamp": "2026-07-24T02:44:44Z",
+      "category": "CERTIFICATE_UPDATE",
+      "email_subject": "ATP202617521: Approval for eATAP Application",
+      "ai_analysis": "SEDA/TNB Interconnection Approval received for 500kWp commercial solar installation in Johor.",
+      "question": "New SEDA eATAP Interconnection Approval received for 500kWp Industrial Plant. Select execution action:",
+      "options": [
+        "🌐 Publish Featured Case Study on Live PR Feed",
+        "📁 Save to SEDA Compliance Vault Only",
+        "⏸️ Hold for Batch Update"
+      ],
+      "status": "WAITING_FOR_MANAGER",
+      "selected_option": null
+    }
+  ],
+  "published_updates": [
+    {
+      "id": "PUB-Q-3d32d74d-99ec-4e4e-98dc-b8c1227c4207",
+      "category": "CERTIFICATE_UPDATE",
+      "title": "new Certification",
+      "date": "2026-09-24",
+      "summary": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪\n\n📌 行动事项\n@Adam Ong \n@Digital Marketing Team @Leon Eternalgy  @IT 部门 @Zhi Hong Gan  请主动把这项认证加入：\n* 公司网站\n* 公司手册 / Company Profile\n* 所有 Proposal 模板\n* Sales Kit",
+      "badge": "CERTIFICATE_UPDATE",
+      "sender": "zhihong@eternalgy.me",
+      "content": "这是一个值得全公司一起庆祝的里程碑！\n\n我们目前承接的上市企业工程，是公司有史以来最大的项目（感谢 Olivier 带来这位客户）。客户标准很高，要求现场必须有持证的安全人员监督。之前我们没有自己的持证人员，只能花几千块向外包公司租用这个职位。\n\n现在 Safwan 用三天时间（22–24 Sept）完成了 OSH-C 课程，Eternalgy 终于有了自己的持证安全人员！这不只是 Safwan 个人的成就，也代表公司有能力承接更大、标准更高的项目，又迈进了一个新的 Milestone 🚀\n\n谢谢 Safwan 的付出和担当，公司以你为荣！💪\n\n📌 行动事项\n@Adam Ong \n@Digital Marketing Team @Leon Eternalgy  @IT 部门 @Zhi Hong Gan  请主动把这项认证加入：\n* 公司网站\n* 公司手册 / Company Profile\n* 所有 Proposal 模板\n* Sales Kit",
+      "attachments": [
+        {
+          "id": "d9f837be-3814-4e1f-8a9f-50f47fc96d1e",
+          "filename": "tspec_62c253c2b65f4735ba5cf0edf04886b3_runs_1_rows.csv",
+          "content_type": "text/csv"
+        }
+      ]
+    },
+    {
+      "id": "PUB-101",
+      "category": "CERTIFICATE_UPDATE",
+      "title": "CIDB Grade G7 Unlimited Contractor License Renewed",
+      "date": "2026-07-24",
+      "summary": "Official CIDB Grade G7 accreditation re-certified across Building (B04), Civil (CE21) and Electrical (M15) categories.",
+      "badge": "CIDB G7",
+      "media_url": "Reference/Eternalgy_Cert_CIDB.png"
+    },
+    {
+      "id": "PUB-102",
+      "category": "AWARD_RECOGNITION",
+      "title": "Malaysia Golden Bull Outstanding Enterprise Award Winner",
+      "date": "2026-07-23",
+      "summary": "Eternalgy recognized at the Malaysia Golden Bull Awards for excellence in renewable energy deployment and client trust.",
+      "badge": "GOLDEN BULL",
+      "media_url": "Reference/Eternalgy_Award_GoldenBull.png"
+    }
+  ]
 }
