@@ -695,8 +695,9 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="/queue" style="color: #fbbf24; font-weight: 700;">🤖 AI Queue <span style="background: #fbbf24; color: #040906; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; margin-left: 2px;">2 NEW</span></a></li>
-        <li><a href="#live-feed">Live Feed</a></li>
+        <li><a href="/queue" style="color: #fbbf24; font-weight: 700;">🤖 AI Queue <span id="navQueueBadge" style="background: #fbbf24; color: #040906; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; margin-left: 2px;">0 NEW</span></a></li>
+        <li><a href="#live-pr-feed" style="color: #34d399; font-weight: 700;">Live PR Feed <span id="navPrFeedCount" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 10px; margin-left: 2px;">0</span></a></li>
+        <li><a href="#live-feed">Installed Projects</a></li>
         <li><a href="#media-kit">Media Kit</a></li>
         <li><a href="#copywriter-kit">Ad Copy</a></li>
         <li><a href="#certifications">Certifications</a></li>
@@ -784,8 +785,35 @@
       </div>
     </section>
 
+    <!-- Live Public PR Feed & Corporate Announcements (Dynamically Synced via Manager Approvals) -->
+    <section id="live-pr-feed" class="section" style="padding-bottom: 25px;">
+      <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span class="section-tag">Official Public PR &amp; Compliance Registry</span>
+          <h3 class="section-title">Live Public PR Feed</h3>
+          <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">
+            Real-time verified certifications, corporate announcements, and managerial approvals published to the public registry.
+          </p>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <span id="prFeedStatusBadge" style="display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(52, 211, 153, 0.35); color: var(--primary-light); padding: 6px 14px; border-radius: 20px; font-weight: 700;">
+            <span class="pulse-dot" style="width: 7px; height: 7px;"></span> Live &amp; Published (<span id="prFeedPublishedCount">0</span>)
+          </span>
+          <a href="/queue" class="btn-cta btn-outline" style="font-size: 12px; padding: 6px 12px;">
+            🤖 Manager Approval Queue →
+          </a>
+        </div>
+      </div>
+
+      <div class="grid-3" id="prPublishedGrid">
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 36px;">
+          <p style="color: var(--text-muted); font-size: 14px;">⏳ Loading live public PR announcements...</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Phase 1: Live Installed Projects Feed (Synced with Postgres DB) -->
-    <section id="live-feed" class="section">
+    <section id="live-feed" class="section" style="padding-top: 25px;">
       <div class="section-header">
         <span class="section-tag">Phase 1 · Real-Time DB Engine</span>
         <h3 class="section-title">Live Installed Projects Feed</h3>
@@ -1574,11 +1602,13 @@
         const res = await response.json();
         if (res.success && res.data) {
           updateMetricsUI(res.data);
+          if (res.data.published_updates) renderPublishedUpdates(res.data.published_updates);
           showToast('✅ Metrics Refreshed! Last checked: ' + (res.data.metrics?.last_check_date || 'Now'));
         } else {
           const fallbackResp = await fetch('/api/dashboard-state?refresh=true');
           const state = await fallbackResp.json();
           updateMetricsUI(state);
+          if (state.published_updates) renderPublishedUpdates(state.published_updates);
           showToast('✅ Metrics Refreshed!');
         }
       } catch (err) {
@@ -1591,6 +1621,128 @@
       }
     }
 
+    function renderPublishedUpdates(updates) {
+      const container = document.getElementById('prPublishedGrid');
+      if (!container) return;
+
+      const countBadge = document.getElementById('prFeedPublishedCount');
+      if (countBadge) countBadge.textContent = updates ? updates.length : 0;
+      const navCount = document.getElementById('navPrFeedCount');
+      if (navCount) navCount.textContent = updates ? updates.length : 0;
+
+      if (!updates || updates.length === 0) {
+        container.innerHTML = `
+          <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 36px;">
+            <p style="color: var(--text-muted); font-size: 15px;">No public announcements published yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = updates.map(item => {
+        const cat = (item.category || '').toUpperCase();
+        const badge = (item.badge || '').toUpperCase();
+        const isCert = cat.includes('CERTIFICATE') || badge.includes('CIDB') || badge.includes('SEDA');
+        const isAward = cat.includes('AWARD') || badge.includes('GOLDEN') || badge.includes('BOOK');
+
+        let badgeBg = 'rgba(59, 130, 246, 0.16)';
+        let badgeColor = '#60a5fa';
+        let icon = '📢';
+
+        if (isCert) {
+          badgeBg = 'rgba(16, 185, 129, 0.2)';
+          badgeColor = '#34d399';
+          icon = '🛡️';
+        } else if (isAward) {
+          badgeBg = 'rgba(245, 158, 11, 0.2)';
+          badgeColor = '#fbbf24';
+          icon = '🏆';
+        }
+
+        let summaryText = item.summary || '';
+        let actionBadge = '';
+        if (summaryText.includes("Manager Selected: '")) {
+          const parts = summaryText.split("'. ");
+          if (parts.length > 1) {
+            actionBadge = parts[0].replace("Manager Selected: '", "");
+            summaryText = parts.slice(1).join("'. ");
+          } else {
+            actionBadge = summaryText.replace("Manager Selected: '", "").replace(/'$/, "");
+            summaryText = "Manager authorized live PR publication.";
+          }
+        }
+
+        let mediaHtml = '';
+        if (item.media_url) {
+          const escapedTitle = (item.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          mediaHtml = `
+            <div class="cert-preview-box" onclick="openOverviewModal('${item.media_url}', '${escapedTitle}')" style="margin: 14px 0 6px; max-height: 180px; overflow: hidden; border-radius: 12px; cursor: pointer; border: 1px solid rgba(52, 211, 153, 0.25); background: #000; position: relative;">
+              <img src="${item.media_url}" alt="${item.title || 'PR Media'}" style="width: 100%; height: 160px; object-fit: cover; display: block;" />
+              <div class="cert-overlay-tag" style="position: absolute; bottom: 8px; right: 8px; background: rgba(4,9,6,0.85); color: #34d399; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(52,211,153,0.3);">🔍 Preview Media ↗</div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <button type="button" onclick="openOverviewModal('${item.media_url}', '${escapedTitle}')" class="btn-cta btn-primary" style="padding: 5px 12px; font-size: 11.5px;">Preview ↗</button>
+              <a href="${item.media_url}" download class="btn-cta btn-outline" style="padding: 5px 12px; font-size: 11.5px;">Download 📥</a>
+            </div>
+          `;
+        } else if (isCert) {
+          mediaHtml = `
+            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(16, 185, 129, 0.06); border: 1px dashed rgba(52, 211, 153, 0.3); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 12px; color: #34d399; font-weight: 700;">
+                🛡️ Verified Compliance Record
+              </div>
+              <a href="Eternalgy_Certifications_All.pdf" target="_blank" download class="btn-cta btn-outline" style="padding: 5px 10px; font-size: 11.5px;">
+                Certs PDF 📥
+              </a>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="card" style="border: 1px solid rgba(52, 211, 153, 0.28); background: linear-gradient(180deg, var(--bg-card) 0%, rgba(16, 185, 129, 0.05) 100%);">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+                <span class="badge-tag" style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeColor}40;">
+                  ${icon} ${item.badge || item.category || 'PR UPDATE'}
+                </span>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="font-size: 11.5px; color: var(--primary-light); font-weight: 700;">
+                    ✓ Published Live
+                  </span>
+                  <span style="font-size: 11.5px; color: var(--text-muted); font-family: monospace;">
+                    ${item.date || ''}
+                  </span>
+                </div>
+              </div>
+
+              <h4 style="font-family: var(--font-heading); font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.3;">
+                ${item.title || 'Untitled Update'}
+              </h4>
+
+              <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px;">
+                ${summaryText}
+              </p>
+
+              ${actionBadge ? `
+                <div style="margin-bottom: 8px;">
+                  <span style="font-size: 11px; background: rgba(255,255,255,0.06); color: #d1d5db; padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+                    Action: ${actionBadge}
+                  </span>
+                </div>
+              ` : ''}
+
+              ${mediaHtml}
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted);">
+              <span>ID: ${item.id || 'PUB-RECORD'}</span>
+              <span style="color: var(--primary-light); font-weight: 600;">Verified Live on PR Hub</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
     async function loadDashboardState() {
       try {
         const response = await fetch('/api/dashboard-state');
@@ -1599,6 +1751,17 @@
 
         // Update Live Metrics & Dates
         updateMetricsUI(state);
+
+        // Render Live Public PR Feed
+        renderPublishedUpdates(state.published_updates || []);
+
+        // Update nav counters
+        const navQueueBadge = document.getElementById('navQueueBadge');
+        if (navQueueBadge && state.manager_questions) {
+          const pendingCount = state.manager_questions.filter(q => q.status !== 'RESOLVED').length;
+          navQueueBadge.textContent = pendingCount + ' NEW';
+          navQueueBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+        }
 
         // Render Manager Questions Console
         const consoleEl = document.getElementById('managerQAConsole');

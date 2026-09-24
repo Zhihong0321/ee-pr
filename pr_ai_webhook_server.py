@@ -523,8 +523,10 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(data).encode("utf-8"))
 
     def do_GET(self):
+        clean_path = urllib.parse.urlsplit(self.path).path
+
         # Serve root PR Showcase UI
-        if self.path == "/" or self.path == "/index.html":
+        if clean_path in ["/", "/index.html"]:
             html_path = os.path.join(MEDIAKIT_DIR, "eternalgy_overview.html")
             if os.path.exists(html_path):
                 log_page_visit(self, "Eternalgy PR & Media Center")
@@ -533,7 +535,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 return
 
         # Serve Dedicated Manager AI Approval Queue Page
-        if self.path in ["/queue", "/approval-queue", "/queue.html", "/manager"]:
+        if clean_path in ["/queue", "/approval-queue", "/queue.html", "/manager"]:
             queue_path = os.path.join(MEDIAKIT_DIR, "queue.html")
             if os.path.exists(queue_path):
                 log_page_visit(self, "Manager AI Approval Queue")
@@ -542,7 +544,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 return
 
         # Serve Dedicated Cloudflare R2 Media Gallery Page
-        if self.path in ["/gallery", "/photos", "/media-library", "/gallery.html"]:
+        if clean_path in ["/gallery", "/photos", "/media-library", "/gallery.html"]:
             gallery_path = os.path.join(MEDIAKIT_DIR, "media_gallery.html")
             if os.path.exists(gallery_path):
                 log_page_visit(self, "Media Gallery")
@@ -551,7 +553,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                 return
 
         # Serve API Documentation page for Email Server Team
-        if self.path in ["/docs", "/webhook-docs", "/docs.html"]:
+        if clean_path in ["/docs", "/webhook-docs", "/docs.html"]:
             docs_path = os.path.join(MEDIAKIT_DIR, "webhook_docs.html")
             if os.path.exists(docs_path):
                 log_page_visit(self, "Webhook Documentation")
@@ -559,15 +561,15 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     self._send_response(200, f.read(), "text/html; charset=utf-8")
                 return
 
-        if self.path.startswith("/api/dashboard-state") or self.path.startswith("/api/refresh-metrics"):
-            if "refresh=true" in self.path or self.path.startswith("/api/refresh-metrics"):
+        if clean_path.startswith("/api/dashboard-state") or clean_path.startswith("/api/refresh-metrics"):
+            if "refresh=true" in self.path or clean_path.startswith("/api/refresh-metrics"):
                 state = refresh_metrics_state()
             else:
                 state = load_state()
             self._send_response(200, state)
             return
 
-        if self.path.startswith("/api/debug-log"):
+        if clean_path.startswith("/api/debug-log"):
             parsed = urllib.parse.urlsplit(self.path)
             qs = urllib.parse.parse_qs(parsed.query)
             limit = 100
@@ -580,7 +582,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {"count": len(entries), "entries": entries})
             return
 
-        if self.path.startswith("/debug"):
+        if clean_path.startswith("/debug"):
             entries = load_debug_log(100)
             rows = ""
             for e in entries:
@@ -607,7 +609,7 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, html, "text/html; charset=utf-8")
             return
 
-        if self.path == "/health" or self.path == "/api/health":
+        if clean_path in ["/health", "/api/health"]:
             self._send_response(200, {
                 "status": "healthy",
                 "service": "Eternalgy Corporate PR & Media Center",
@@ -841,8 +843,13 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
                     q["selected_option"] = chosen_opt
                     resolved_question = q
 
-                    state.setdefault("published_updates", []).insert(0, {
-                        "id": f"PUB-{q_id}",
+                    pub_id = f"PUB-{q_id}"
+                    state["published_updates"] = [
+                        p for p in state.get("published_updates", [])
+                        if p.get("id") != pub_id
+                    ]
+                    state["published_updates"].insert(0, {
+                        "id": pub_id,
                         "category": q.get("category", "PRESS_RELEASE"),
                         "title": q.get("email_subject", "PR Announcement"),
                         "date": datetime.utcnow().strftime("%Y-%m-%d"),
