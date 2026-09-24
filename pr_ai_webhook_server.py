@@ -646,7 +646,8 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
         self._send_response(404, {"error": f"File or route not found: {self.path}"})
 
     def do_POST(self):
-        if self.path.startswith("/api/optimize-image") or self.path.startswith("/api/upload-image"):
+        clean_path = urllib.parse.urlsplit(self.path).path
+        if clean_path.startswith("/api/optimize-image") or clean_path.startswith("/api/upload-image"):
             content_length = int(self.headers.get("Content-Length", 0))
             body_bytes = self.rfile.read(content_length) if content_length > 0 else b""
             
@@ -888,8 +889,75 @@ class PRServerHandler(http.server.BaseHTTPRequestHandler):
             self._send_response(200, {"success": True, "message": f"Recorded manager choice: '{chosen_opt}'"})
             return
 
+        if clean_path in ["/api/delete-published-update", "/api/published-update/delete"]:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
+            try:
+                payload = json.loads(body_bytes.decode("utf-8"))
+            except Exception:
+                payload = {}
+            pub_id = payload.get("id") or payload.get("update_id")
+            if not pub_id:
+                self._send_response(400, {"success": False, "error": "id is required"})
+                return
+            state = load_state()
+            state["published_updates"] = [p for p in state.get("published_updates", []) if p.get("id") != pub_id]
+            save_state(state)
+            self._send_response(200, {"success": True, "message": f"Deleted published update: {pub_id}"})
+            return
+
+        if clean_path in ["/api/delete-manager-question", "/api/manager-question/delete"]:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
+            try:
+                payload = json.loads(body_bytes.decode("utf-8"))
+            except Exception:
+                payload = {}
+            q_id = payload.get("question_id") or payload.get("id")
+            delete_published = payload.get("delete_published", True)
+            if not q_id:
+                self._send_response(400, {"success": False, "error": "question_id is required"})
+                return
+            state = load_state()
+            state["manager_questions"] = [q for q in state.get("manager_questions", []) if q.get("question_id") != q_id]
+            if delete_published:
+                pub_id = f"PUB-{q_id}"
+                state["published_updates"] = [p for p in state.get("published_updates", []) if p.get("id") != pub_id]
+            save_state(state)
+            self._send_response(200, {"success": True, "message": f"Deleted question: {q_id}"})
+            return
+
         unmatched_body = read_request_body(self)
         log_inbound_request(self, unmatched_body, "unmatched", "404_no_route_matched", {})
+        self._send_response(404, {"error": "Endpoint not found"})
+
+    def do_DELETE(self):
+        clean_path = urllib.parse.urlsplit(self.path).path
+        content_length = int(self.headers.get("Content-Length", 0))
+        body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
+        try:
+            payload = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
+        except Exception:
+            payload = {}
+        qs = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+
+        if clean_path.startswith("/api/published-update") or clean_path.startswith("/api/delete-published-update"):
+            pub_id = payload.get("id") or (qs.get("id") or [None])[0] or clean_path.split("/")[-1]
+            state = load_state()
+            state["published_updates"] = [p for p in state.get("published_updates", []) if p.get("id") != pub_id]
+            save_state(state)
+            self._send_response(200, {"success": True, "message": f"Deleted published update: {pub_id}"})
+            return
+
+        if clean_path.startswith("/api/manager-question") or clean_path.startswith("/api/delete-manager-question"):
+            q_id = payload.get("question_id") or (qs.get("question_id") or [None])[0] or clean_path.split("/")[-1]
+            state = load_state()
+            state["manager_questions"] = [q for q in state.get("manager_questions", []) if q.get("question_id") != q_id]
+            state["published_updates"] = [p for p in state.get("published_updates", []) if p.get("id") != f"PUB-{q_id}"]
+            save_state(state)
+            self._send_response(200, {"success": True, "message": f"Deleted question: {q_id}"})
+            return
+
         self._send_response(404, {"error": "Endpoint not found"})
 
 if __name__ == "__main__":
